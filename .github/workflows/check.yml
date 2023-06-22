@@ -1,0 +1,21 @@
+name: Run code quality checks
+on: [push]
+jobs:
+  QualityCheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+      - name: Install
+        run: yarn install
+      - name: Run prettier
+        run: yarn format:check
+      - name: Run linter
+        run: yarn lint
+      - name: Check TS types
+        run: yarn check:types

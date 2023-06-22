@@ -1,0 +1,25 @@
+# Yarn
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+.idea
+
+# Build
+dist
+tsconfig.check.tsbuildinfo
+
+# Envs
+.env
+.env.test
+.env.development
+.env.production
+
+# Tests
+coverage
+
+node_modules

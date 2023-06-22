@@ -1,0 +1,36 @@
+{
+  "name": "@bushidogames/backups",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "author": "Krzysztof Matuszak <kmatuszak04@icloud.com>",
+  "repository": "https://github.com/Bushido-Games/backups.git",
+  "packageManager": "yarn@3.3.1",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "cli": "docker compose -f docker-compose-cli.yml up -d && docker exec backups-cli bash -c \"rm -f ~/.backups-cli-expert-mode\" && docker attach backups-cli",
+    "cli:expert": "docker compose -f docker-compose-cli.yml up -d && docker exec backups-cli bash -c \"touch ~/.backups-cli-expert-mode\" && docker attach backups-cli",
+    "lint": "yarn workspaces foreach run lint",
+    "format:check": "yarn workspaces foreach run format:check",
+    "format:fix": "yarn workspaces foreach run format:fix",
+    "build": "yarn workspaces foreach run build",
+    "test": "yarn workspaces foreach run test",
+    "check:types": "yarn workspaces foreach run check:types",
+    "postinstall": "husky install"
+  },
+  "dependencies": {
+    "eslint": "^8.18.0"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^8.5.0",
+    "git-commit-msg-linter": "^4.1.3",
+    "husky": "^8.0.0",
+    "prettier": "2.7.1",
+    "typescript": "^4.7.4"
+  },
+  "installConfig": {
+    "pnp": true
+  }
+}

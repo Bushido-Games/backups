@@ -1,0 +1,25 @@
+version: '3.7'
+name: backups-cli
+services:
+  backups-cli:
+    container_name: backups-cli
+    restart: 'no'
+    build:
+      context: .
+      dockerfile: ./packages/backups-cli/Dockerfile
+    working_dir: /app/packages/backups-cli/
+    command: yarn start
+    tty: true
+    stdin_open: true
+    privileged: true
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - ${PWD}:/app
+      - /usr/bin/envvault:/usr/bin/envvault
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Europe/Warsaw
+      EDITOR: nano
+      VAULT_ADDR: ${VAULT_ADDR}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}

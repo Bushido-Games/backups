@@ -1,0 +1,6 @@
+export const BACKUP_NOT_FOUND = 'Backup with the given key does not exist!'
+export const TRACKER_NOT_FOUND = 'Tracker with the given id does not exist!'
+export const REPLICA_SET_NOT_HEALTHY = 'Replica set is not healthy!'
+export const NONE_OF_INSTANCES_HEALTHY = 'None of the instances is healthy!'
+export const CANNOT_DELETE_SCHEDULED = 'Scheduled backups cannot be deleted!'
+export const INVALID_DUMP_KEY = 'The dump key provided is invalid!'
