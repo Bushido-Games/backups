@@ -10,8 +10,8 @@
     "packages/*"
   ],
   "scripts": {
-    "cli": "set -o allexport && source cli.env && docker compose up -d && docker exec backups-cli bash -c \"rm -f ~/.backups-cli-expert-mode\" && docker attach backups-cli",
-    "cli:expert": "set -o allexport && source cli.env && docker compose up -d && docker exec backups-cli bash -c \"touch ~/.backups-cli-expert-mode\" && docker attach backups-cli",
+    "cli": "bash -c 'set -o allexport && source cli.env && docker compose up -d && docker exec backups-cli bash -c \"rm -f ~/.backups-cli-expert-mode\" && docker attach backups-cli'",
+    "cli:expert": "bash -c 'set -o allexport && source cli.env && docker compose up -d && docker exec backups-cli bash -c \"touch ~/.backups-cli-expert-mode\" && docker attach backups-cli'",
     "lint": "yarn workspaces foreach run lint",
     "format:check": "yarn workspaces foreach run format:check",
     "format:fix": "yarn workspaces foreach run format:fix",
