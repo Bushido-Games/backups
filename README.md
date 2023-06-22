@@ -4,7 +4,7 @@
 
 #### ➡ [backups-api](packages/backups-api)
 
-- This package contains app written using [Nest.js](https://nestjs.com/) that automatically creates backups of the whole HMS database and provides an API for `backups-cli`.
+- This package contains app written using [Nest.js](https://nestjs.com/) that automatically creates backups of the whole database and provides an API for `backups-cli`.
 
 #### ➡ [backups-cli](packages/backups-cli)
 

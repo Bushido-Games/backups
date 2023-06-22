@@ -36,7 +36,7 @@ export const SELECT_TASK = [
       },
       {
         value: TaskType.EXIT,
-        name: '🚪 Exit HMS CLI',
+        name: '🚪 Exit Backups CLI',
       },
     ],
   },
