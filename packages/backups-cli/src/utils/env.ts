@@ -6,11 +6,6 @@ import { homedir } from 'node:os'
 import { EnvironmentType } from 'src/types'
 
 export class Environment {
-  // @todo: find way to provide these
-  private static readonly PREFIX = '...'
-  private static readonly PROJECT_NAME = '...'
-  private static readonly ENV_VAR_NAME = '...'
-
   private static readonly LOCAL_API_ADDRESS = existsSync('/.dockerenv')
     ? 'host.docker.internal'
     : 'localhost'
@@ -23,14 +18,14 @@ export class Environment {
 
   private static apiHosts: { [environment: string]: string } = {
     [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3000`,
-    [EnvironmentType.STAGING]: '...',
-    [EnvironmentType.PRODUCTION]: '...',
+    [EnvironmentType.STAGING]: process.env.STAGING_API_HOST,
+    [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_API_HOST,
   }
 
   private static backupApiHosts: { [environment: string]: string } = {
     [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
-    [EnvironmentType.STAGING]: '...',
-    [EnvironmentType.PRODUCTION]: '...',
+    [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
+    [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
   }
 
   private static async loadFromVault(
@@ -41,7 +36,12 @@ export class Environment {
 
     spinner.start(`Please wait, obtaining key for ${environment} from Vault...`)
 
-    const fullName = [this.PREFIX, environment, this.PROJECT_NAME, name]
+    const fullName = [
+      process.env.CLI_PREFIX,
+      environment,
+      process.env.PROJECT_NAME,
+      name,
+    ]
       .join('_')
       .replaceAll('-', '_')
       .toUpperCase()
@@ -51,7 +51,7 @@ export class Environment {
     try {
       const { stdout } = await promisify(execFile)('envvault', [
         '-p',
-        this.PROJECT_NAME,
+        process.env.PROJECT_NAME,
         '-e',
         environment,
         'env',
@@ -86,15 +86,15 @@ export class Environment {
     this.keys = {
       [EnvironmentType.LOCAL]: await this.loadFromVault(
         EnvironmentType.LOCAL,
-        this.ENV_VAR_NAME
+        process.env.ENV_VAR_NAME
       ),
       [EnvironmentType.STAGING]: await this.loadFromVault(
         EnvironmentType.STAGING,
-        this.ENV_VAR_NAME
+        process.env.ENV_VAR_NAME
       ),
       [EnvironmentType.PRODUCTION]: await this.loadFromVault(
         EnvironmentType.PRODUCTION,
-        this.ENV_VAR_NAME
+        process.env.ENV_VAR_NAME
       ),
     }
   }

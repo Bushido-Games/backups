@@ -15,7 +15,7 @@ cd $MONGO_DIR
 # https://www.mongodb.com/try/download/database-tools
 TOOLS_DISTRO="debian11"
 TOOLS_ARCH="x86_64"
-TOOLS_VERSION="100.7.0"
+TOOLS_VERSION="100.7.2"
 TOOLS_NAME="mongodb-database-tools-$TOOLS_DISTRO-$TOOLS_ARCH-$TOOLS_VERSION"
 
 echo "Downloading [$TOOLS_NAME]..."
@@ -32,7 +32,7 @@ echo "Cleaning up tools..."
 rm -rf $TOOLS_NAME.tgz $TOOLS_NAME/
 
 # https://www.mongodb.com/try/download/shell
-SHELL_VERSION="1.8.0"
+SHELL_VERSION="1.10.1"
 SHELL_OS="linux"
 SHELL_ARCH="x64"
 SHELL_OPENSSL="11"
