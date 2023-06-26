@@ -114,16 +114,14 @@ export class BackupService {
   }
 
   async selectConnectionStringForDump(): Promise<string> {
-    try {
-      await this.healthService.getHealthFrom(
-        this.HAS_SECOND_INSTANCE === 'false'
-          ? this.stringService.getPrimaryConnectionString()
-          : this.stringService.getSecondaryConnectionString()
-      )
-
-      return this.HAS_SECOND_INSTANCE === 'false'
+    const firstConnectionString =
+      this.HAS_SECOND_INSTANCE === 'false'
         ? this.stringService.getPrimaryConnectionString()
         : this.stringService.getSecondaryConnectionString()
+
+    try {
+      await this.healthService.getHealthFrom(firstConnectionString)
+      return firstConnectionString
     } catch {
       if (this.HAS_SECOND_INSTANCE === 'false') {
         throw new ServiceUnavailableException(NONE_OF_INSTANCES_HEALTHY)
