@@ -3,6 +3,7 @@ import * as inquirer from 'inquirer'
 import * as ora from 'ora'
 import {
   COMMON_SELECT_ENVIRONMENT,
+  COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE,
   Environment,
   getDumpKeyProposal,
   getUserSpecifiedDumpKey,
@@ -25,7 +26,13 @@ export const createDump = async (
 }> => {
   const sourceEnvironment =
     useEnvironment ??
-    (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT)).selectedEnvironment
+    (
+      await inquirer.prompt(
+        process.env.DUMP_AUTH_REQUIRED === 'true'
+          ? COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE()
+          : COMMON_SELECT_ENVIRONMENT
+      )
+    ).selectedEnvironment
 
   const key = forceDefaultKey
     ? getDumpKeyProposal(sourceEnvironment).key

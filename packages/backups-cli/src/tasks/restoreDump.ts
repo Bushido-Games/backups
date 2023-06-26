@@ -24,7 +24,7 @@ export const restoreDump = async (
   useKey?: string,
   sourceEnvironment?: EnvironmentType
 ): Promise<void> => {
-  const { targetEnvironment } = await inquirer.prompt(
+  const { selectedEnvironment } = await inquirer.prompt(
     COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(sourceEnvironment)
   )
 
@@ -33,7 +33,7 @@ export const restoreDump = async (
     (
       await inquirer.prompt(
         RESTORE_DUMP_SELECT_BACKUP(
-          await fetchBackups(targetEnvironment),
+          await fetchBackups(selectedEnvironment),
           (
             await inquirer.prompt(RESTORE_DUMP_SELECT_FILTER())
           ).selectedFilter
@@ -62,7 +62,7 @@ export const restoreDump = async (
 
   if (backupBeforeRestoration) {
     const forceDefaultKey = true
-    await createDump(forceDefaultKey, targetEnvironment)
+    await createDump(forceDefaultKey, selectedEnvironment)
   }
 
   const requestSpinner = ora()
@@ -74,12 +74,12 @@ export const restoreDump = async (
   )
 
   const res = await fetch(
-    `${Environment.getBackupApiHost(targetEnvironment)}/backup/restore`,
+    `${Environment.getBackupApiHost(selectedEnvironment)}/backup/restore`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Environment.getKey(targetEnvironment)}`,
+        Authorization: `Bearer ${Environment.getKey(selectedEnvironment)}`,
       },
       body: JSON.stringify({ key: sourceKey, dropCurrent }),
     }
@@ -99,7 +99,7 @@ export const restoreDump = async (
 
     const res = await fetch(
       `${Environment.getBackupApiHost(
-        targetEnvironment
+        selectedEnvironment
       )}/backup/track/${encodeURIComponent(trackerId)}`,
       { method: 'GET' }
     )
@@ -144,7 +144,7 @@ export const restoreDump = async (
         `Database dump ${chalk.greenBright(
           sourceKey
         )} has been successfully restored to ${chalk.greenBright(
-          targetEnvironment
+          selectedEnvironment
         )}! (${chalk.greenBright(
           collections
         )} collections and ${chalk.greenBright(documents)} documents)`
@@ -152,7 +152,7 @@ export const restoreDump = async (
     }
   }
 
-  if (importUsers) {
-    await fusionAuthImport(targetEnvironment)
+  if (process.env.HAS_FA_IMPORT === 'true' && importUsers) {
+    await fusionAuthImport(selectedEnvironment)
   }
 }

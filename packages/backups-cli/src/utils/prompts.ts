@@ -26,10 +26,14 @@ export const SELECT_TASK = [
         value: TaskType.DELETE_DUMPS,
         name: '🚮 Delete selected dumps from the cloud',
       },
-      {
-        value: TaskType.IMPORT_USERS,
-        name: '👨 Import users from FusionAuth',
-      },
+      ...(process.env.HAS_FA_IMPORT === 'true'
+        ? [
+            {
+              value: TaskType.IMPORT_USERS,
+              name: '👨 Import users from FusionAuth',
+            },
+          ]
+        : []),
       {
         value: TaskType.REPLICA_SET_STATUS,
         name: '🩺 Check health of the replica set',
@@ -105,7 +109,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
   environment?: EnvironmentType
 ): QuestionCollection => [
   {
-    name: 'targetEnvironment',
+    name: 'selectedEnvironment',
     type: 'list',
     message: 'Which environment do you want to use?',
     choices: [
@@ -241,11 +245,15 @@ export const RESTORE_DUMP_EXPERT_QUESTIONS = (
       'Do you want to drop current database before restoring? (recommended)',
     default: dropCurrent,
   },
-  {
-    name: '_importUsers',
-    type: 'confirm',
-    message:
-      'Do you want to import users from FusionAuth after restoration? (recommended)',
-    default: importUsers,
-  },
+  ...(process.env.HAS_FA_IMPORT === 'true'
+    ? [
+        {
+          name: '_importUsers',
+          type: 'confirm',
+          message:
+            'Do you want to import users from FusionAuth after restoration? (recommended)',
+          default: importUsers,
+        },
+      ]
+    : []),
 ]

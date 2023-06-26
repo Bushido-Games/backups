@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { BackupModule } from 'src/backup/backup.module'
-import { FusionAuthGuard } from 'src/common/guards/fusion-auth.guard'
+import { AuthGuard } from 'src/common/guards/auth.guard'
 import { ConfigModule } from 'src/config/config.module'
 import { HealthModule } from 'src/health/health.module'
 
@@ -10,7 +10,7 @@ import { HealthModule } from 'src/health/health.module'
   providers: [
     {
       provide: APP_GUARD,
-      useClass: FusionAuthGuard,
+      useClass: AuthGuard,
     },
   ],
 })

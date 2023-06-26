@@ -27,16 +27,20 @@ import { ShellService } from 'src/shell/shell.service'
 
 @Injectable()
 export class BackupService {
-  private readonly TMP_DIR = '/app/tmp'
-  private readonly MONGO_DIR = '/opt/mongo'
-  private readonly MONGO_DUMP_PATH = `${this.MONGO_DIR}/mongodump`
-  private readonly MONGO_RESTORE_PATH = `${this.MONGO_DIR}/mongorestore`
+  private readonly TMP_DIR: string = '/app/tmp'
+  private readonly MONGO_DIR: string = '/opt/mongo'
+  private readonly MONGO_DUMP_PATH: string = `${this.MONGO_DIR}/mongodump`
+  private readonly MONGO_RESTORE_PATH: string = `${this.MONGO_DIR}/mongorestore`
 
-  private readonly ENVIRONMENT_NAME =
+  private readonly ENVIRONMENT_NAME: string =
     this.configService.get<string>('ENVIRONMENT_NAME')
 
-  private readonly DATABASE_NAME = this.configService.get<string>(
+  private readonly DATABASE_NAME: string = this.configService.get<string>(
     'MONGO_DB_DATABASE_NAME'
+  )
+
+  private readonly HAS_SECOND_INSTANCE: string = this.configService.get<string>(
+    'HAS_SECOND_INSTANCE'
   )
 
   public readonly trackers: { [trackerId: string]: TrackerResponse } = {}
@@ -110,18 +114,27 @@ export class BackupService {
   }
 
   async selectConnectionStringForDump(): Promise<string> {
-    const primaryConnectionString =
-      this.stringService.getPrimaryConnectionString()
-    const secondaryConnectionString =
-      this.stringService.getSecondaryConnectionString()
-
     try {
-      await this.healthService.getHealthFrom(secondaryConnectionString)
-      return secondaryConnectionString
+      await this.healthService.getHealthFrom(
+        this.HAS_SECOND_INSTANCE === 'false'
+          ? this.stringService.getPrimaryConnectionString()
+          : this.stringService.getSecondaryConnectionString()
+      )
+
+      return this.HAS_SECOND_INSTANCE === 'false'
+        ? this.stringService.getPrimaryConnectionString()
+        : this.stringService.getSecondaryConnectionString()
     } catch {
+      if (this.HAS_SECOND_INSTANCE === 'false') {
+        throw new ServiceUnavailableException(NONE_OF_INSTANCES_HEALTHY)
+      }
+
       try {
-        await this.healthService.getHealthFrom(primaryConnectionString)
-        return primaryConnectionString
+        await this.healthService.getHealthFrom(
+          this.stringService.getPrimaryConnectionString()
+        )
+
+        return this.stringService.getPrimaryConnectionString()
       } catch {
         throw new ServiceUnavailableException(NONE_OF_INSTANCES_HEALTHY)
       }

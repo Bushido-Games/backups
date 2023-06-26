@@ -8,6 +8,6 @@ export class HealthController {
 
   @Get()
   public async getHealth(): Promise<ReplicaSetStatusResponse> {
-    return await this.healthService.getHealth()
+    return this.healthService.getHealth()
   }
 }
