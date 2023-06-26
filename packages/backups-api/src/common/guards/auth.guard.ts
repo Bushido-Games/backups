@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core'
 import { Request } from 'express'
 
 @Injectable()
-export class FusionAuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
   private readonly BACKUP_API_AUTHORIZATION_KEY =
     this.configService.get<string>('BACKUP_API_AUTHORIZATION_KEY')
 

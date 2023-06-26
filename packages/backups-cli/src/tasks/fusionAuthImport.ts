@@ -11,22 +11,22 @@ import { EnvironmentType } from 'src/types'
 export const fusionAuthImport = async (
   useEnvironment?: EnvironmentType
 ): Promise<void> => {
-  const targetEnvironment =
+  const selectedEnvironment =
     useEnvironment ??
     (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE()))
-      .targetEnvironment
+      .selectedEnvironment
 
   const importSpinner = ora()
 
   importSpinner.start('Importing users from FusionAuth...')
 
   const res = await fetch(
-    `${Environment.getApiHost(targetEnvironment)}/user/get-user-from-fa`,
+    `${Environment.getApiHost(selectedEnvironment)}/user/get-user-from-fa`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Environment.getKey(targetEnvironment)}`,
+        Authorization: `Bearer ${Environment.getKey(selectedEnvironment)}`,
       },
       body: JSON.stringify({}),
     }
