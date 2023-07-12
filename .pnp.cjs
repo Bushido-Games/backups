@@ -2200,7 +2200,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/dotenv", "npm:8.2.0"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.5.0"],\
-            ["@types/node", "npm:16.11.49"],\
+            ["@types/node", "npm:20.4.1"],\
             ["@types/node-schedule", "npm:2.1.0"],\
             ["@types/sequelize", "npm:4.28.14"],\
             ["@types/supertest", "npm:2.0.12"],\
@@ -3417,13 +3417,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@types/node", [\
-        ["npm:16.11.49", {\
-          "packageLocation": "./.yarn/cache/@types-node-npm-16.11.49-21a166a769-05545ee49d.zip/node_modules/@types/node/",\
-          "packageDependencies": [\
-            ["@types/node", "npm:16.11.49"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:18.14.6", {\
           "packageLocation": "./.yarn/cache/@types-node-npm-18.14.6-7d0665d471-2f88f482ca.zip/node_modules/@types/node/",\
           "packageDependencies": [\
@@ -3435,6 +3428,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-18.7.5-2c6edcf62e-f74426f2c9.zip/node_modules/@types/node/",\
           "packageDependencies": [\
             ["@types/node", "npm:18.7.5"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:20.4.1", {\
+          "packageLocation": "./.yarn/cache/@types-node-npm-20.4.1-16fae4d18f-22cbcc792f.zip/node_modules/@types/node/",\
+          "packageDependencies": [\
+            ["@types/node", "npm:20.4.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -9264,7 +9264,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/sequelize-typescript-virtual-5b90fbd97a/0/cache/sequelize-typescript-npm-2.1.3-512be8fd59-e6e2757600.zip/node_modules/sequelize-typescript/",\
           "packageDependencies": [\
             ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.3"],\
-            ["@types/node", "npm:16.11.49"],\
+            ["@types/node", "npm:20.4.1"],\
             ["@types/reflect-metadata", null],\
             ["@types/sequelize", "npm:4.28.14"],\
             ["@types/validator", null],\
@@ -10047,7 +10047,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@tsconfig/node12", "npm:1.0.11"],\
             ["@tsconfig/node14", "npm:1.0.3"],\
             ["@tsconfig/node16", "npm:1.0.3"],\
-            ["@types/node", "npm:16.11.49"],\
+            ["@types/node", "npm:20.4.1"],\
             ["@types/swc__core", null],\
             ["@types/swc__wasm", null],\
             ["@types/typescript", null],\
