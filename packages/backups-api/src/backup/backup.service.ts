@@ -155,6 +155,7 @@ export class BackupService {
       `--archive=${path}`,
       '--gzip',
       '--oplog',
+      '--numParallelCollections=1',
     ]
 
     const mongoDumpProcess = spawn(this.MONGO_DUMP_PATH, params)
@@ -219,6 +220,7 @@ export class BackupService {
       `--uri="${this.stringService.getPrimaryConnectionString()}"`,
       `--archive=${path}`,
       '--gzip',
+      '--numParallelCollections=1',
     ]
 
     params.push(

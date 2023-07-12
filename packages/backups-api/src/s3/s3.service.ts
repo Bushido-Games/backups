@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { S3 as S3Client } from '@aws-sdk/client-s3'
-import { readFile, writeFile } from 'node:fs/promises'
+import { createReadStream, createWriteStream } from 'node:fs'
+import { Readable } from 'node:stream'
+import { ReadableStream } from 'node:stream/web'
 
 @Injectable()
 export class S3Service {
@@ -22,7 +24,7 @@ export class S3Service {
   constructor(private readonly configService: ConfigService) {}
 
   async uploadBackup(key: string, path: string): Promise<void> {
-    const body = await readFile(path)
+    const body = createReadStream(path)
 
     await this.S3_CLIENT.putObject({
       ...this.COMMON_INPUT,
@@ -64,8 +66,11 @@ export class S3Service {
       Key: key,
     })
 
-    const bytes = await Body.transformToByteArray()
+    const readStream = Body.transformToWebStream()
+    const writeStream = createWriteStream(path)
 
-    await writeFile(path, bytes)
+    Readable.fromWeb(readStream as ReadableStream).pipe(writeStream)
+
+    return new Promise((resolve) => writeStream.on('close', resolve))
   }
 }
