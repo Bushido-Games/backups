@@ -28,14 +28,16 @@ export class HealthService {
 
   public async getHealth(): Promise<ReplicaSetStatusResponse> {
     try {
-      return this.getHealthFrom(this.stringService.getPrimaryConnectionString())
+      return await this.getHealthFrom(
+        this.stringService.getPrimaryConnectionString()
+      )
     } catch {
       if (this.HAS_SECOND_INSTANCE === 'false') {
         return { ok: 0 }
       }
 
       try {
-        return this.getHealthFrom(
+        return await this.getHealthFrom(
           this.stringService.getSecondaryConnectionString()
         )
       } catch {
