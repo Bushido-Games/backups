@@ -6,7 +6,7 @@ import {
 import { spawn } from 'node:child_process'
 import { StringService } from 'src/string/string.service'
 import { S3Service } from 'src/s3/s3.service'
-import { unlink } from 'node:fs/promises'
+import { readdir, unlink } from 'node:fs/promises'
 import {
   BackupType,
   CreateProgress,
@@ -111,6 +111,16 @@ export class BackupService {
     }
 
     return clone
+  }
+
+  async cleanupTeamporaryDirectory(): Promise<PromiseSettledResult<void>[]> {
+    const files = await readdir(this.TMP_DIR)
+
+    return Promise.allSettled(
+      files.map(
+        (file: string): Promise<void> => unlink(`${this.TMP_DIR}/${file}`)
+      )
+    )
   }
 
   async selectConnectionStringForDump(): Promise<string> {
