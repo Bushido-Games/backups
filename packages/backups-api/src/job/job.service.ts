@@ -20,6 +20,8 @@ export class JobService implements OnModuleInit {
     this.configService.get<string>('ENVIRONMENT_NAME')
 
   async onModuleInit(): Promise<void> {
+    await this.backupService.cleanupTeamporaryDirectory()
+
     for (const rule of this.BACKUP_RULES) {
       scheduleJob(rule, async (): Promise<void> => {
         const connectionString =
