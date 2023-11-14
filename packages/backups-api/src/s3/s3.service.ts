@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { S3 as S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommandOutput,
+  S3 as S3Client,
+  _Object,
+} from '@aws-sdk/client-s3'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
 
 @Injectable()
 export class S3Service {
+  private readonly MAX_MONTHS_TO_PERSIST: number = 1
+
   private readonly S3_REGION = this.configService.get<string>('S3_REGION')
 
   private readonly S3_ENDPOINT = this.configService.get<string>('S3_ENDPOINT')
@@ -58,6 +64,28 @@ export class S3Service {
     const { Contents } = await this.S3_CLIENT.listObjectsV2(this.COMMON_INPUT)
 
     return (Contents ?? []).map(({ Key }): string => Key)
+  }
+
+  async cleanupOldBackups(): Promise<
+    PromiseSettledResult<DeleteObjectCommandOutput>[]
+  > {
+    const removeBeforeDate = new Date()
+    removeBeforeDate.setMonth(
+      removeBeforeDate.getMonth() - this.MAX_MONTHS_TO_PERSIST
+    )
+
+    const { Contents } = await this.S3_CLIENT.listObjectsV2(this.COMMON_INPUT)
+
+    const toDelete = (Contents ?? []).filter(
+      ({ LastModified }: _Object): boolean => LastModified < removeBeforeDate
+    )
+
+    return Promise.allSettled(
+      toDelete.map(
+        ({ Key }: _Object): Promise<DeleteObjectCommandOutput> =>
+          this.S3_CLIENT.deleteObject({ ...this.COMMON_INPUT, Key })
+      )
+    )
   }
 
   async downloadBackup(key: string, path: string): Promise<void> {

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { scheduleJob } from 'node-schedule'
 import { BackupService } from 'src/backup/backup.service'
 import { BackupType } from 'src/backup/backup.types'
+import { S3Service } from 'src/s3/s3.service'
 
 @Injectable()
 export class JobService implements OnModuleInit {
@@ -12,6 +13,7 @@ export class JobService implements OnModuleInit {
   private readonly BACKUP_RULES = [this.NIGHT_BACKUP_RULE, this.DAY_BACKUP_RULE]
 
   constructor(
+    private readonly s3Service: S3Service,
     private readonly backupService: BackupService,
     private readonly configService: ConfigService
   ) {}
@@ -24,6 +26,8 @@ export class JobService implements OnModuleInit {
 
     for (const rule of this.BACKUP_RULES) {
       scheduleJob(rule, async (): Promise<void> => {
+        await this.s3Service.cleanupOldBackups()
+
         const connectionString =
           await this.backupService.selectConnectionStringForDump()
 
