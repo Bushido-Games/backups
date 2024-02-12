@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {
-  DeleteObjectCommandOutput,
-  S3 as S3Client,
-  _Object,
-} from '@aws-sdk/client-s3'
+import { S3 as S3Client } from '@aws-sdk/client-s3'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
+import { CliService } from 'src/cli/cli.service'
+
+interface B2Object {
+  fileId: string
+  size: number
+  uploadTimestamp: number
+}
 
 @Injectable()
 export class S3Service {
@@ -27,7 +30,10 @@ export class S3Service {
 
   private readonly COMMON_INPUT = { Bucket: this.BACKUP_BUCKET_NAME }
 
-  constructor(private readonly configService: ConfigService) {}
+  public constructor(
+    private readonly configService: ConfigService,
+    private readonly cliService: CliService
+  ) {}
 
   async uploadBackup(key: string, path: string): Promise<void> {
     const body = createReadStream(path)
@@ -66,26 +72,37 @@ export class S3Service {
     return (Contents ?? []).map(({ Key }): string => Key)
   }
 
-  async cleanupOldBackups(): Promise<
-    PromiseSettledResult<DeleteObjectCommandOutput>[]
-  > {
+  async cleanupOldBackups(): Promise<void> {
     const removeBeforeDate = new Date()
     removeBeforeDate.setMonth(
       removeBeforeDate.getMonth() - this.MAX_MONTHS_TO_PERSIST
     )
 
-    const { Contents } = await this.S3_CLIENT.listObjectsV2(this.COMMON_INPUT)
-
-    const toDelete = (Contents ?? []).filter(
-      ({ LastModified }: _Object): boolean => LastModified < removeBeforeDate
-    )
-
-    return Promise.allSettled(
-      toDelete.map(
-        ({ Key }: _Object): Promise<DeleteObjectCommandOutput> =>
-          this.S3_CLIENT.deleteObject({ ...this.COMMON_INPUT, Key })
+    const contents: B2Object[] = JSON.parse(
+      await this.cliService.execute(
+        'ls',
+        this.BACKUP_BUCKET_NAME,
+        '--json',
+        '--versions'
       )
     )
+
+    const toDelete = contents.filter(
+      ({ uploadTimestamp, size }: B2Object): boolean =>
+        new Date(uploadTimestamp) < removeBeforeDate || size < 1
+    )
+
+    // Delete files in batches of 32 at a time
+    while (toDelete.length) {
+      await Promise.allSettled(
+        toDelete
+          .splice(0, 32)
+          .map(
+            ({ fileId }: B2Object): Promise<string> =>
+              this.cliService.execute('delete-file-version', fileId)
+          )
+      )
+    }
   }
 
   async downloadBackup(key: string, path: string): Promise<void> {

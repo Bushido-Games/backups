@@ -1,4 +1,4 @@
-FROM node:18-bullseye
+FROM node:18-bookworm
 
 ENV TZ Europe/Warsaw
 ENV PACKAGE_NAME backups-cli

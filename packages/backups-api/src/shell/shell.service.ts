@@ -4,8 +4,8 @@ import { promisify } from 'node:util'
 
 @Injectable()
 export class ShellService {
-  private readonly MONGO_DIR = '/opt/mongo'
-  private readonly MONGO_SHELL_PATH = `${this.MONGO_DIR}/mongosh`
+  private readonly TOOLS_DIR = '/opt/tools'
+  private readonly MONGO_SHELL_PATH = `${this.TOOLS_DIR}/mongosh`
   private readonly MAX_BUFFER_64_MB = 8192 * 8192
   private readonly RESPONSE_TIMEOUT = 5000
 

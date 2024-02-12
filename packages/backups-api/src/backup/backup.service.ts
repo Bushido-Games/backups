@@ -28,9 +28,9 @@ import { ShellService } from 'src/shell/shell.service'
 @Injectable()
 export class BackupService {
   private readonly TMP_DIR: string = '/app/tmp'
-  private readonly MONGO_DIR: string = '/opt/mongo'
-  private readonly MONGO_DUMP_PATH: string = `${this.MONGO_DIR}/mongodump`
-  private readonly MONGO_RESTORE_PATH: string = `${this.MONGO_DIR}/mongorestore`
+  private readonly TOOLS_DIR: string = '/opt/tools'
+  private readonly MONGO_DUMP_PATH: string = `${this.TOOLS_DIR}/mongodump`
+  private readonly MONGO_RESTORE_PATH: string = `${this.TOOLS_DIR}/mongorestore`
 
   private readonly ENVIRONMENT_NAME: string =
     this.configService.get<string>('ENVIRONMENT_NAME')
