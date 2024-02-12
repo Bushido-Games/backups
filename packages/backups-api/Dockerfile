@@ -1,13 +1,13 @@
-FROM node:18-bullseye
+FROM node:18-bookworm
 
 ENV TZ Europe/Warsaw
 ENV PACKAGE_NAME backups-api
 
 WORKDIR /app
 
-COPY ./submodules/backups/packages/backups-api/mongo.sh ./submodules/backups/packages/backups-api/package.json yarn.lock ./
+COPY ./submodules/backups/packages/backups-api/tools.sh ./submodules/backups/packages/backups-api/package.json yarn.lock ./
 
-RUN bash -c "./mongo.sh"
+RUN bash -c "./tools.sh"
 
 RUN yarn install
 
