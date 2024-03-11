@@ -35,7 +35,7 @@ export class S3Service {
     private readonly cliService: CliService
   ) {}
 
-  async uploadBackup(key: string, path: string): Promise<void> {
+  public async uploadBackup(key: string, path: string): Promise<void> {
     const body = createReadStream(path)
 
     await this.S3_CLIENT.putObject({
@@ -45,7 +45,7 @@ export class S3Service {
     })
   }
 
-  async backupExists(key: string): Promise<boolean> {
+  public async backupExists(key: string): Promise<boolean> {
     try {
       await this.S3_CLIENT.headObject({
         ...this.COMMON_INPUT,
@@ -62,17 +62,17 @@ export class S3Service {
     }
   }
 
-  async deleteBackup(key: string): Promise<void> {
+  public async deleteBackup(key: string): Promise<void> {
     await this.S3_CLIENT.deleteObject({ ...this.COMMON_INPUT, Key: key })
   }
 
-  async listBackups(): Promise<string[]> {
+  public async listBackups(): Promise<string[]> {
     const { Contents } = await this.S3_CLIENT.listObjectsV2(this.COMMON_INPUT)
 
     return (Contents ?? []).map(({ Key }): string => Key)
   }
 
-  async cleanupOldBackups(): Promise<void> {
+  public async cleanupOldBackups(): Promise<void> {
     const removeBeforeDate = new Date()
     removeBeforeDate.setMonth(
       removeBeforeDate.getMonth() - this.MAX_MONTHS_TO_PERSIST
@@ -105,7 +105,7 @@ export class S3Service {
     }
   }
 
-  async downloadBackup(key: string, path: string): Promise<void> {
+  public async downloadBackup(key: string, path: string): Promise<void> {
     const { Body } = await this.S3_CLIENT.getObject({
       ...this.COMMON_INPUT,
       Key: key,

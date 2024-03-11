@@ -8,12 +8,19 @@ export class AuthGuard implements CanActivate {
   private readonly BACKUP_API_AUTHORIZATION_KEY =
     this.configService.get<string>('BACKUP_API_AUTHORIZATION_KEY')
 
-  constructor(
+  private readonly HAS_COMMON_BUCKETS =
+    this.configService.get<string>('HAS_COMMON_BUCKETS')
+
+  public constructor(
     private readonly reflector: Reflector,
     private readonly configService: ConfigService
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  public canActivate(context: ExecutionContext): boolean {
+    if (this.HAS_COMMON_BUCKETS === 'true') {
+      return
+    }
+
     const isPrivate = this.reflector.get<boolean>(
       'isPrivate',
       context.getHandler()

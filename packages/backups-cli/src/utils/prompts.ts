@@ -113,7 +113,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
     type: 'list',
     message: 'Which environment do you want to use?',
     choices: [
-      ...(Environment.getKey(EnvironmentType.LOCAL) &&
+      ...(Environment.hasAccessToEnvironment(EnvironmentType.LOCAL) &&
       environment !== EnvironmentType.LOCAL
         ? [
             {
@@ -122,7 +122,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
             },
           ]
         : []),
-      ...(Environment.getKey(EnvironmentType.STAGING) &&
+      ...(Environment.hasAccessToEnvironment(EnvironmentType.STAGING) &&
       environment !== EnvironmentType.STAGING
         ? [
             {
@@ -131,7 +131,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
             },
           ]
         : []),
-      ...(Environment.getKey(EnvironmentType.PRODUCTION) &&
+      ...(Environment.hasAccessToEnvironment(EnvironmentType.PRODUCTION) &&
       environment !== EnvironmentType.PRODUCTION
         ? [
             {

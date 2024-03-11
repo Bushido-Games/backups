@@ -21,7 +21,8 @@ export class JobService implements OnModuleInit {
   private readonly ENVIRONMENT_NAME =
     this.configService.get<string>('ENVIRONMENT_NAME')
 
-  async onModuleInit(): Promise<void> {
+  // @TODO: replace this with @nestjs/schedule
+  public async onModuleInit(): Promise<void> {
     await this.backupService.cleanupTeamporaryDirectory()
 
     for (const rule of this.BACKUP_RULES) {

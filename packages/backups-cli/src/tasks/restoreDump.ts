@@ -73,13 +73,18 @@ export const restoreDump = async (
     'Sending dump restoration request and waiting for response...'
   )
 
+  const credentials: string =
+    process.env.HAS_COMMON_BUCKETS === 'true'
+      ? `Bearer ${Environment.getAuthorizationKey(selectedEnvironment)}`
+      : `Basic ${JSON.stringify(Environment.getAllBucketCredentials())}`
+
   const res = await fetch(
     `${Environment.getBackupApiHost(selectedEnvironment)}/backup/restore`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Environment.getKey(selectedEnvironment)}`,
+        Authorization: credentials,
       },
       body: JSON.stringify({ key: sourceKey, dropCurrent }),
     }

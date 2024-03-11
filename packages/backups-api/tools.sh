@@ -13,7 +13,7 @@ mkdir -p $TOOLS_DIR
 cd $TOOLS_DIR
 
 # https://www.mongodb.com/try/download/database-tools
-TOOLS_DISTRO="debian11" # No version for Debian 12 has been released yet, but this is compatible as of 100.9.x
+TOOLS_DISTRO="debian12"
 TOOLS_ARCH="x86_64"
 TOOLS_VERSION="100.9.4"
 TOOLS_NAME="mongodb-database-tools-$TOOLS_DISTRO-$TOOLS_ARCH-$TOOLS_VERSION"
@@ -32,7 +32,7 @@ echo "Cleaning up tools..."
 rm -rf $TOOLS_NAME.tgz $TOOLS_NAME/
 
 # https://www.mongodb.com/try/download/shell
-SHELL_VERSION="2.1.4"
+SHELL_VERSION="2.1.5"
 SHELL_OS="linux"
 SHELL_ARCH="x64"
 SHELL_OPENSSL="3" # 1.1 for <= Debian 11, 3 for >= Debian 12
@@ -51,7 +51,7 @@ echo "Cleaning up shell..."
 rm -rf $SHELL_NAME.tgz $SHELL_NAME/
 
 # https://github.com/Backblaze/B2_Command_Line_Tool/releases
-B2_VERSION="3.15.0"
+B2_VERSION="3.16.1"
 B2_OS="linux"
 B2_NAME="b2-$B2_OS"
 

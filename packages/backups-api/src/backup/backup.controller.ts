@@ -30,19 +30,21 @@ import { HealthService } from 'src/health/health.service'
 
 @Controller('backup')
 export class BackupController {
-  constructor(
+  public constructor(
     private readonly backupService: BackupService,
     private readonly s3Service: S3Service,
     private readonly healthService: HealthService
   ) {}
 
   @Get()
-  async list(): Promise<string[]> {
+  public async list(): Promise<string[]> {
     return this.s3Service.listBackups()
   }
 
   @Post()
-  async create(@Body() { key }: CreateBackupDto): Promise<CreateResponse> {
+  public async create(
+    @Body() { key }: CreateBackupDto
+  ): Promise<CreateResponse> {
     this.backupService.validateKey(key)
 
     const connectionString =
@@ -59,7 +61,7 @@ export class BackupController {
 
   @Post('restore')
   @Private()
-  async restore(
+  public async restore(
     @Body() { key, dropCurrent }: RestoreBackupDto
   ): Promise<RestoreResponse> {
     if (!(await this.healthService.allHealthy())) {
@@ -80,7 +82,7 @@ export class BackupController {
   }
 
   @Delete()
-  async delete(@Body() { key }: DeleteBackupDto): Promise<void> {
+  public async delete(@Body() { key }: DeleteBackupDto): Promise<void> {
     if (key.toLowerCase().includes(BackupType.SCHEDULED)) {
       throw new BadRequestException(CANNOT_DELETE_SCHEDULED)
     }
@@ -93,7 +95,7 @@ export class BackupController {
   }
 
   @Get('track/:id')
-  track(@Param('id') trackerId: string): TrackerResponse {
+  public track(@Param('id') trackerId: string): TrackerResponse {
     if (!this.backupService.trackers[trackerId]) {
       throw new NotFoundException(TRACKER_NOT_FOUND)
     }
