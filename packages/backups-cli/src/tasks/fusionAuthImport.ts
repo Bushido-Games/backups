@@ -26,9 +26,7 @@ export const fusionAuthImport = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Environment.getAuthorizationKey(
-          selectedEnvironment
-        )}`,
+        Authorization: `Bearer ${Environment.getKey(selectedEnvironment)}`,
       },
       body: JSON.stringify({}),
     }
