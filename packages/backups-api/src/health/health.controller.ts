@@ -4,7 +4,7 @@ import { ReplicaSetStatusResponse } from './health.types'
 
 @Controller('health')
 export class HealthController {
-  constructor(private readonly healthService: HealthService) {}
+  public constructor(private readonly healthService: HealthService) {}
 
   @Get()
   public async getHealth(): Promise<ReplicaSetStatusResponse> {

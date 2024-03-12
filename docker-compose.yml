@@ -6,8 +6,8 @@ services:
     restart: 'no'
     build:
       context: .
-      dockerfile: ./packages/backups-cli/Dockerfile
-    working_dir: /app/packages/backups-cli/
+      dockerfile: ./submodules/backups/packages/backups-cli/Dockerfile
+    working_dir: /app/submodules/backups/packages/backups-cli/
     command: yarn start
     tty: true
     stdin_open: true

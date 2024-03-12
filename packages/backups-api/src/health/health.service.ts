@@ -10,7 +10,7 @@ export class HealthService {
     'HAS_SECOND_INSTANCE'
   )
 
-  constructor(
+  public constructor(
     private readonly configService: ConfigService,
     private readonly stringService: StringService,
     private readonly shellService: ShellService

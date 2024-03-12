@@ -45,7 +45,7 @@ export class BackupService {
 
   public readonly trackers: { [trackerId: string]: TrackerResponse } = {}
 
-  constructor(
+  public constructor(
     private readonly s3Service: S3Service,
     private readonly stringService: StringService,
     private readonly configService: ConfigService,
@@ -53,7 +53,7 @@ export class BackupService {
     private readonly shellService: ShellService
   ) {}
 
-  validateKey(key: string): void {
+  public validateKey(key: string): void {
     if (!consistsOnlyOfAllowedChars(key)) {
       throw new BadRequestException(INVALID_DUMP_KEY)
     }
@@ -88,7 +88,7 @@ export class BackupService {
     }
   }
 
-  prepareTracker(trackerId: string): void {
+  public prepareTracker(trackerId: string): void {
     this.trackers[trackerId] = {
       progress: [],
       collections: 0,
@@ -96,7 +96,7 @@ export class BackupService {
     }
   }
 
-  processTracker(trackerId: string): TrackerResponse {
+  public processTracker(trackerId: string): TrackerResponse {
     const tracker = this.trackers[trackerId]
 
     const clone = JSON.parse(JSON.stringify(tracker))
@@ -113,7 +113,9 @@ export class BackupService {
     return clone
   }
 
-  async cleanupTeamporaryDirectory(): Promise<PromiseSettledResult<void>[]> {
+  public async cleanupTeamporaryDirectory(): Promise<
+    PromiseSettledResult<void>[]
+  > {
     const files = await readdir(this.TMP_DIR)
 
     return Promise.allSettled(
@@ -123,7 +125,7 @@ export class BackupService {
     )
   }
 
-  async selectConnectionStringForDump(): Promise<string> {
+  public async selectConnectionStringForDump(): Promise<string> {
     const firstConnectionString =
       this.HAS_SECOND_INSTANCE === 'false'
         ? this.stringService.getPrimaryConnectionString()
@@ -149,7 +151,7 @@ export class BackupService {
     }
   }
 
-  async createDump(
+  public async createDump(
     connectionString: string,
     key: string,
     trackerId?: string
@@ -204,7 +206,7 @@ export class BackupService {
     })
   }
 
-  async restoreDump(
+  public async restoreDump(
     key: string,
     trackerId: string,
     dropCurrent: boolean

@@ -14,19 +14,20 @@ export class Environment {
     `${homedir()}/.backups-cli-expert-mode`
   )
 
-  private static keys: { [environment: string]: string | null } = {}
+  private static keys: { [environment in EnvironmentType]: string | null }
 
-  private static apiHosts: { [environment: string]: string } = {
+  private static apiHosts: { [environment in EnvironmentType]: string } = {
     [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3000`,
     [EnvironmentType.STAGING]: process.env.STAGING_API_HOST,
     [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_API_HOST,
   }
 
-  private static backupApiHosts: { [environment: string]: string } = {
-    [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
-    [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
-    [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
-  }
+  private static backupApiHosts: { [environment in EnvironmentType]: string } =
+    {
+      [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
+      [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
+      [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
+    }
 
   private static async loadFromVault(
     environment: EnvironmentType,
