@@ -25,7 +25,7 @@ export class StringService {
     'MONGO_DB_AUTH_SOURCE'
   )
 
-  constructor(private readonly configService: ConfigService) {}
+  public constructor(private readonly configService: ConfigService) {}
 
   private createConnectionString(
     readPreference: string,
@@ -43,11 +43,11 @@ export class StringService {
     }@${host}:${port}/?${params.toString()}`
   }
 
-  getPrimaryConnectionString(): string {
+  public getPrimaryConnectionString(): string {
     return this.createConnectionString('primary', this.HOST, this.PORT)
   }
 
-  getSecondaryConnectionString(): string {
+  public getSecondaryConnectionString(): string {
     return this.createConnectionString(
       'secondary',
       this.BACKUP_HOST,

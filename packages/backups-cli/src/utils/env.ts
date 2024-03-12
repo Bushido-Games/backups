@@ -87,15 +87,15 @@ export class Environment {
     this.keys = {
       [EnvironmentType.LOCAL]: await this.loadFromVault(
         EnvironmentType.LOCAL,
-        process.env.AUTHORIZATION_KEY_ENV_VAR_NAME
+        process.env.ENV_VAR_NAME
       ),
       [EnvironmentType.STAGING]: await this.loadFromVault(
         EnvironmentType.STAGING,
-        process.env.AUTHORIZATION_KEY_ENV_VAR_NAME
+        process.env.ENV_VAR_NAME
       ),
       [EnvironmentType.PRODUCTION]: await this.loadFromVault(
         EnvironmentType.PRODUCTION,
-        process.env.AUTHORIZATION_KEY_ENV_VAR_NAME
+        process.env.ENV_VAR_NAME
       ),
     }
   }

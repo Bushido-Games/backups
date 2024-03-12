@@ -12,7 +12,7 @@ export class JobService implements OnModuleInit {
 
   private readonly BACKUP_RULES = [this.NIGHT_BACKUP_RULE, this.DAY_BACKUP_RULE]
 
-  constructor(
+  public constructor(
     private readonly s3Service: S3Service,
     private readonly backupService: BackupService,
     private readonly configService: ConfigService
