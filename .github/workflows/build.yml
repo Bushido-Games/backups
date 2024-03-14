@@ -1,0 +1,38 @@
+name: Build images
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  build-packages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install modules
+        run: yarn
+
+      - name: Run yarn build
+        run: yarn build
+
+      - name: Upload packages dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages_dist-${{ github.run_id }}-${{ github.run_number }}
+          path: packages/**/dist
+
+  call-create-pkg-backups-api:
+    uses: ./.github/workflows/create-pkg.yml
+    with:
+      pkg-name: backups-api
+    needs:
+      - build-packages
