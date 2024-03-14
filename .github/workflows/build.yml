@@ -36,3 +36,10 @@ jobs:
       pkg-name: backups-api
     needs:
       - build-packages
+
+  call-create-pkg-backups-cli:
+    uses: ./.github/workflows/create-pkg.yml
+    with:
+      pkg-name: backups-cli
+    needs:
+      - build-packages
