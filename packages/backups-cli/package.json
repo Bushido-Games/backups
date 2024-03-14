@@ -1,11 +1,12 @@
 {
   "name": "@bushidogames/backups-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "private": true,
   "author": "Krzysztof Matuszak <kmatuszak04@icloud.com>",
   "scripts": {
-    "start": "yarn ts-node src/main.ts"
+    "start": "yarn ts-node src/main.ts",
+    "build": "yarn tsc"
   },
   "dependencies": {
     "chalk": "^4.1.2",
