@@ -29,7 +29,7 @@ export const fusionAuthImport = async (
         'Content-Type': 'application/json',
         Authorization: `Bearer ${Environment.getToken(
           selectedEnvironment,
-          TokenType.RESTORE_BACKUP
+          TokenType.IMPORT_USERS
         )}`,
       },
       body: JSON.stringify({}),
