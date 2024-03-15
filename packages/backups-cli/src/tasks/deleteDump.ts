@@ -6,6 +6,7 @@ import {
   DELETE_DUMP_SELECT_BACKUP,
   Environment,
   fetchBackups,
+  TokenType,
 } from 'src/utils'
 import { constants as HTTP_CONSTANTS } from 'node:http2'
 import { EnvironmentType } from 'src/types'
@@ -18,7 +19,9 @@ export const deleteDump = async (
     (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT)).selectedEnvironment
 
   const { selectedKey } = await inquirer.prompt(
-    DELETE_DUMP_SELECT_BACKUP(await fetchBackups(sourceEnvironment))
+    DELETE_DUMP_SELECT_BACKUP(
+      await fetchBackups(sourceEnvironment, TokenType.DELETE_BACKUP)
+    )
   )
 
   if (selectedKey.toLowerCase().includes('finish deleting the dumps')) {
@@ -34,7 +37,13 @@ export const deleteDump = async (
     `${Environment.getBackupApiHost(sourceEnvironment)}/backup`,
     {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Environment.getToken(
+          sourceEnvironment,
+          TokenType.DELETE_BACKUP
+        )}`,
+      },
       body: JSON.stringify({ key: selectedKey }),
     }
   )

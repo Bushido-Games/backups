@@ -25,8 +25,9 @@ import {
   RestoreResponse,
   TrackerResponse,
 } from './backup.types'
-import { Private } from 'src/common/decorators/private.decorator'
 import { HealthService } from 'src/health/health.service'
+import { AllowedTokens } from 'src/common/decorators/allowed-tokens.decorator'
+import { TokenType } from 'src/common/guards/auth.guard'
 
 @Controller('backup')
 export class BackupController {
@@ -37,11 +38,13 @@ export class BackupController {
   ) {}
 
   @Get()
+  @AllowedTokens(TokenType.RESTORE_BACKUP, TokenType.DELETE_BACKUP)
   public async list(): Promise<string[]> {
     return this.s3Service.listBackups()
   }
 
   @Post()
+  @AllowedTokens(TokenType.CREATE_BACKUP)
   public async create(
     @Body() { key }: CreateBackupDto
   ): Promise<CreateResponse> {
@@ -60,7 +63,7 @@ export class BackupController {
   }
 
   @Post('restore')
-  @Private()
+  @AllowedTokens(TokenType.RESTORE_BACKUP)
   public async restore(
     @Body() { key, dropCurrent }: RestoreBackupDto
   ): Promise<RestoreResponse> {
@@ -82,6 +85,7 @@ export class BackupController {
   }
 
   @Delete()
+  @AllowedTokens(TokenType.DELETE_BACKUP)
   public async delete(@Body() { key }: DeleteBackupDto): Promise<void> {
     if (key.toLowerCase().includes(BackupType.SCHEDULED)) {
       throw new BadRequestException(CANNOT_DELETE_SCHEDULED)
@@ -95,6 +99,7 @@ export class BackupController {
   }
 
   @Get('track/:id')
+  @AllowedTokens(TokenType.RESTORE_BACKUP, TokenType.CREATE_BACKUP)
   public track(@Param('id') trackerId: string): TrackerResponse {
     if (!this.backupService.trackers[trackerId]) {
       throw new NotFoundException(TRACKER_NOT_FOUND)

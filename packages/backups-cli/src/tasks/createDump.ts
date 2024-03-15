@@ -6,6 +6,7 @@ import {
   Environment,
   getDumpKeyProposal,
   getUserSpecifiedDumpKey,
+  TokenType,
   waitForNextTrack,
 } from 'src/utils'
 import {
@@ -45,6 +46,10 @@ export const createDump = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${Environment.getToken(
+          sourceEnvironment,
+          TokenType.CREATE_BACKUP
+        )}`,
       },
       body: JSON.stringify({ key }),
     }
@@ -66,7 +71,15 @@ export const createDump = async (
       `${Environment.getBackupApiHost(
         sourceEnvironment
       )}/backup/track/${encodeURIComponent(trackerId)}`,
-      { method: 'GET' }
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${Environment.getToken(
+            sourceEnvironment,
+            TokenType.CREATE_BACKUP
+          )}`,
+        },
+      }
     )
 
     if (res.status !== HTTP_CONSTANTS.HTTP_STATUS_OK) {

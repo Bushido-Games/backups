@@ -1,6 +1,6 @@
 import { QuestionCollection } from 'inquirer'
 import { BackupType, EnvironmentType, FilterType, TaskType } from 'src/types'
-import { Environment } from './env'
+import { Environment, TokenType } from './env'
 import { getDumpKeyProposal } from './getDumpKeyProposal'
 import { validateKey } from './validateKey'
 
@@ -113,8 +113,10 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
     type: 'list',
     message: 'Which environment do you want to use?',
     choices: [
-      ...(Environment.getKey(EnvironmentType.LOCAL) &&
-      environment !== EnvironmentType.LOCAL
+      ...(Environment.getToken(
+        EnvironmentType.LOCAL,
+        TokenType.RESTORE_BACKUP
+      ) && environment !== EnvironmentType.LOCAL
         ? [
             {
               value: EnvironmentType.LOCAL,
@@ -122,8 +124,10 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
             },
           ]
         : []),
-      ...(Environment.getKey(EnvironmentType.STAGING) &&
-      environment !== EnvironmentType.STAGING
+      ...(Environment.getToken(
+        EnvironmentType.STAGING,
+        TokenType.RESTORE_BACKUP
+      ) && environment !== EnvironmentType.STAGING
         ? [
             {
               value: EnvironmentType.STAGING,
@@ -131,8 +135,10 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
             },
           ]
         : []),
-      ...(Environment.getKey(EnvironmentType.PRODUCTION) &&
-      environment !== EnvironmentType.PRODUCTION
+      ...(Environment.getToken(
+        EnvironmentType.PRODUCTION,
+        TokenType.RESTORE_BACKUP
+      ) && environment !== EnvironmentType.PRODUCTION
         ? [
             {
               value: EnvironmentType.PRODUCTION,

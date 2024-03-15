@@ -1,6 +1,7 @@
 import {
   Environment,
   COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE,
+  TokenType,
 } from 'src/utils'
 import * as chalk from 'chalk'
 import * as inquirer from 'inquirer'
@@ -26,7 +27,10 @@ export const fusionAuthImport = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Environment.getKey(selectedEnvironment)}`,
+        Authorization: `Bearer ${Environment.getToken(
+          selectedEnvironment,
+          TokenType.RESTORE_BACKUP
+        )}`,
       },
       body: JSON.stringify({}),
     }

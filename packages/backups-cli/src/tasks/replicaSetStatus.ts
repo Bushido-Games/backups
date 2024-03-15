@@ -1,6 +1,6 @@
 import * as inquirer from 'inquirer'
 import * as ora from 'ora'
-import { COMMON_SELECT_ENVIRONMENT, Environment } from 'src/utils'
+import { COMMON_SELECT_ENVIRONMENT, Environment, TokenType } from 'src/utils'
 import { constants as HTTP_CONSTANTS } from 'node:http2'
 
 export const checkReplicaSetStatus = async (): Promise<void> => {
@@ -14,7 +14,15 @@ export const checkReplicaSetStatus = async (): Promise<void> => {
 
   const res = await fetch(
     `${Environment.getBackupApiHost(selectedEnvironment)}/health`,
-    { method: 'GET' }
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${Environment.getToken(
+          selectedEnvironment,
+          TokenType.GET_HEALTH
+        )}`,
+      },
+    }
   )
 
   if (res.status !== HTTP_CONSTANTS.HTTP_STATUS_OK) {

@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { scheduleJob } from 'node-schedule'
 import { BackupService } from 'src/backup/backup.service'
-import { BackupType } from 'src/backup/backup.types'
+import { BackupType, EnvironmentType } from 'src/backup/backup.types'
 import { S3Service } from 'src/s3/s3.service'
 
 @Injectable()
@@ -18,8 +18,8 @@ export class JobService implements OnModuleInit {
     private readonly configService: ConfigService
   ) {}
 
-  private readonly ENVIRONMENT_NAME =
-    this.configService.get<string>('ENVIRONMENT_NAME')
+  private readonly ENVIRONMENT_NAME: EnvironmentType =
+    this.configService.get<EnvironmentType>('ENVIRONMENT_NAME')
 
   public async onModuleInit(): Promise<void> {
     await this.backupService.cleanupTeamporaryDirectory()

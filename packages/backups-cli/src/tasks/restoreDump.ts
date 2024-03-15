@@ -9,6 +9,7 @@ import {
   COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE,
   RESTORE_DUMP_SELECT_FILTER,
   waitForNextTrack,
+  TokenType,
 } from 'src/utils'
 import {
   EnvironmentType,
@@ -33,7 +34,7 @@ export const restoreDump = async (
     (
       await inquirer.prompt(
         RESTORE_DUMP_SELECT_BACKUP(
-          await fetchBackups(selectedEnvironment),
+          await fetchBackups(selectedEnvironment, TokenType.RESTORE_BACKUP),
           (
             await inquirer.prompt(RESTORE_DUMP_SELECT_FILTER())
           ).selectedFilter
@@ -79,7 +80,10 @@ export const restoreDump = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${Environment.getKey(selectedEnvironment)}`,
+        Authorization: `Bearer ${Environment.getToken(
+          selectedEnvironment,
+          TokenType.RESTORE_BACKUP
+        )}`,
       },
       body: JSON.stringify({ key: sourceKey, dropCurrent }),
     }
@@ -101,7 +105,15 @@ export const restoreDump = async (
       `${Environment.getBackupApiHost(
         selectedEnvironment
       )}/backup/track/${encodeURIComponent(trackerId)}`,
-      { method: 'GET' }
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${Environment.getToken(
+            selectedEnvironment,
+            TokenType.RESTORE_BACKUP
+          )}`,
+        },
+      }
     )
 
     if (res.status !== HTTP_CONSTANTS.HTTP_STATUS_OK) {
