@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
   private readonly BACKUP_API_AUTHORIZATION_TOKENS: {
     [environmentType in EnvironmentType]: EnvironmentTokens
   } = JSON.parse(
-    this.configService.get<string>('BACKUP_API_AUTHORIZATION_TOKENS') ?? '{}'
+    this.configService.get<string>('BACKUP_API_AUTHORIZATION_TOKENS')
   )
 
   private readonly ENVIRONMENT_NAME: EnvironmentType =
