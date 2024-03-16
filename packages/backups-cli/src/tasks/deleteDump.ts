@@ -2,7 +2,7 @@ import * as chalk from 'chalk'
 import * as inquirer from 'inquirer'
 import * as ora from 'ora'
 import {
-  COMMON_SELECT_ENVIRONMENT,
+  COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE,
   DELETE_DUMP_SELECT_BACKUP,
   Environment,
   fetchBackups,
@@ -16,7 +16,11 @@ export const deleteDump = async (
 ): Promise<void> => {
   const sourceEnvironment =
     useEnvironment ??
-    (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT)).selectedEnvironment
+    (
+      await inquirer.prompt(
+        COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(TokenType.DELETE_BACKUP)
+      )
+    ).selectedEnvironment
 
   const { selectedKey } = await inquirer.prompt(
     DELETE_DUMP_SELECT_BACKUP(

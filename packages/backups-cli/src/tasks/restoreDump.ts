@@ -26,7 +26,10 @@ export const restoreDump = async (
   sourceEnvironment?: EnvironmentType
 ): Promise<void> => {
   const { selectedEnvironment } = await inquirer.prompt(
-    COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(sourceEnvironment)
+    COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(
+      TokenType.RESTORE_BACKUP,
+      sourceEnvironment
+    )
   )
 
   const sourceKey =

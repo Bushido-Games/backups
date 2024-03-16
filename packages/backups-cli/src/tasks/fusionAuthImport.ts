@@ -14,8 +14,11 @@ export const fusionAuthImport = async (
 ): Promise<void> => {
   const selectedEnvironment =
     useEnvironment ??
-    (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE()))
-      .selectedEnvironment
+    (
+      await inquirer.prompt(
+        COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(TokenType.IMPORT_USERS)
+      )
+    ).selectedEnvironment
 
   const importSpinner = ora()
 
