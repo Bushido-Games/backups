@@ -30,7 +30,13 @@ export class Environment {
     `${homedir()}/.backups-cli-expert-mode`
   )
 
-  private static tokens: { [environment in EnvironmentType]: EnvironmentTokens }
+  private static tokens: {
+    [environment in EnvironmentType]:
+      | {
+          [environment in EnvironmentType]: EnvironmentTokens
+        }
+      | null
+  }
 
   private static apiHosts: { [environment in EnvironmentType]: string } = {
     [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3000`,
@@ -128,19 +134,45 @@ export class Environment {
   ): string | null {
     switch (tokenType) {
       case TokenType.GET_HEALTH:
-        return this.tokens[environment].getHealth || null
+        return (
+          this.tokens[EnvironmentType.LOCAL]?.[environment].getHealth ??
+          this.tokens[EnvironmentType.STAGING]?.[environment].getHealth ??
+          this.tokens[EnvironmentType.PRODUCTION]?.[environment].getHealth ??
+          null
+        )
 
       case TokenType.CREATE_BACKUP:
-        return this.tokens[environment].createBackup || null
+        return (
+          this.tokens[EnvironmentType.LOCAL]?.[environment].createBackup ??
+          this.tokens[EnvironmentType.STAGING]?.[environment].createBackup ??
+          this.tokens[EnvironmentType.PRODUCTION]?.[environment].createBackup ??
+          null
+        )
 
       case TokenType.RESTORE_BACKUP:
-        return this.tokens[environment].restoreBackup || null
+        return (
+          this.tokens[EnvironmentType.LOCAL]?.[environment].restoreBackup ??
+          this.tokens[EnvironmentType.STAGING]?.[environment].restoreBackup ??
+          this.tokens[EnvironmentType.PRODUCTION]?.[environment]
+            .restoreBackup ??
+          null
+        )
 
       case TokenType.DELETE_BACKUP:
-        return this.tokens[environment].deleteBackup || null
+        return (
+          this.tokens[EnvironmentType.LOCAL]?.[environment].deleteBackup ??
+          this.tokens[EnvironmentType.STAGING]?.[environment].deleteBackup ??
+          this.tokens[EnvironmentType.PRODUCTION]?.[environment].deleteBackup ??
+          null
+        )
 
       case TokenType.IMPORT_USERS:
-        return this.tokens[environment].importUsers || null
+        return (
+          this.tokens[EnvironmentType.LOCAL]?.[environment].importUsers ??
+          this.tokens[EnvironmentType.STAGING]?.[environment].importUsers ??
+          this.tokens[EnvironmentType.PRODUCTION]?.[environment].importUsers ??
+          null
+        )
 
       default:
         return null
