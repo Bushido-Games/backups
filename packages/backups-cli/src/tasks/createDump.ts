@@ -2,10 +2,11 @@ import * as chalk from 'chalk'
 import * as inquirer from 'inquirer'
 import * as ora from 'ora'
 import {
-  COMMON_SELECT_ENVIRONMENT,
+  COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE,
   Environment,
   getDumpKeyProposal,
   getUserSpecifiedDumpKey,
+  TokenType,
   waitForNextTrack,
 } from 'src/utils'
 import {
@@ -25,7 +26,11 @@ export const createDump = async (
 }> => {
   const sourceEnvironment =
     useEnvironment ??
-    (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT)).selectedEnvironment
+    (
+      await inquirer.prompt(
+        COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(TokenType.CREATE_BACKUP)
+      )
+    ).selectedEnvironment
 
   const key = forceDefaultKey
     ? getDumpKeyProposal(sourceEnvironment).key
@@ -45,6 +50,10 @@ export const createDump = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${Environment.getToken(
+          sourceEnvironment,
+          TokenType.CREATE_BACKUP
+        )}`,
       },
       body: JSON.stringify({ key }),
     }
@@ -66,7 +75,15 @@ export const createDump = async (
       `${Environment.getBackupApiHost(
         sourceEnvironment
       )}/backup/track/${encodeURIComponent(trackerId)}`,
-      { method: 'GET' }
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${Environment.getToken(
+            sourceEnvironment,
+            TokenType.CREATE_BACKUP
+          )}`,
+        },
+      }
     )
 
     if (res.status !== HTTP_CONSTANTS.HTTP_STATUS_OK) {

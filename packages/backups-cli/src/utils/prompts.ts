@@ -1,6 +1,6 @@
 import { QuestionCollection } from 'inquirer'
 import { BackupType, EnvironmentType, FilterType, TaskType } from 'src/types'
-import { Environment } from './env'
+import { Environment, TokenType } from './env'
 import { getDumpKeyProposal } from './getDumpKeyProposal'
 import { validateKey } from './validateKey'
 
@@ -46,28 +46,6 @@ export const SELECT_TASK = [
   },
 ]
 
-export const COMMON_SELECT_ENVIRONMENT = [
-  {
-    name: 'selectedEnvironment',
-    type: 'list',
-    message: 'Which environment do you want to use?',
-    choices: [
-      {
-        value: EnvironmentType.LOCAL,
-        name: '🏡 Local',
-      },
-      {
-        value: EnvironmentType.STAGING,
-        name: '🧪 Staging',
-      },
-      {
-        value: EnvironmentType.PRODUCTION,
-        name: '💰 Production',
-      },
-    ],
-  },
-]
-
 export const EDIT_DUMP_KEY = (
   environment: EnvironmentType
 ): QuestionCollection => {
@@ -106,6 +84,7 @@ export const EDIT_DUMP_KEY = (
 }
 
 export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
+  requiredTokenType: TokenType,
   environment?: EnvironmentType
 ): QuestionCollection => [
   {
@@ -113,7 +92,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
     type: 'list',
     message: 'Which environment do you want to use?',
     choices: [
-      ...(Environment.getKey(EnvironmentType.LOCAL) &&
+      ...(Environment.getToken(EnvironmentType.LOCAL, requiredTokenType) &&
       environment !== EnvironmentType.LOCAL
         ? [
             {
@@ -122,7 +101,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
             },
           ]
         : []),
-      ...(Environment.getKey(EnvironmentType.STAGING) &&
+      ...(Environment.getToken(EnvironmentType.STAGING, requiredTokenType) &&
       environment !== EnvironmentType.STAGING
         ? [
             {
@@ -131,7 +110,7 @@ export const COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE = (
             },
           ]
         : []),
-      ...(Environment.getKey(EnvironmentType.PRODUCTION) &&
+      ...(Environment.getToken(EnvironmentType.PRODUCTION, requiredTokenType) &&
       environment !== EnvironmentType.PRODUCTION
         ? [
             {

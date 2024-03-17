@@ -32,8 +32,8 @@ export class BackupService {
   private readonly MONGO_DUMP_PATH: string = `${this.TOOLS_DIR}/mongodump`
   private readonly MONGO_RESTORE_PATH: string = `${this.TOOLS_DIR}/mongorestore`
 
-  private readonly ENVIRONMENT_NAME: string =
-    this.configService.get<string>('ENVIRONMENT_NAME')
+  private readonly ENVIRONMENT_NAME: EnvironmentType =
+    this.configService.get<EnvironmentType>('ENVIRONMENT_NAME')
 
   private readonly DATABASE_NAME: string = this.configService.get<string>(
     'MONGO_DB_DATABASE_NAME'

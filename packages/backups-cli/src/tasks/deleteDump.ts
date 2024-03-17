@@ -2,10 +2,11 @@ import * as chalk from 'chalk'
 import * as inquirer from 'inquirer'
 import * as ora from 'ora'
 import {
-  COMMON_SELECT_ENVIRONMENT,
+  COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE,
   DELETE_DUMP_SELECT_BACKUP,
   Environment,
   fetchBackups,
+  TokenType,
 } from 'src/utils'
 import { constants as HTTP_CONSTANTS } from 'node:http2'
 import { EnvironmentType } from 'src/types'
@@ -15,10 +16,16 @@ export const deleteDump = async (
 ): Promise<void> => {
   const sourceEnvironment =
     useEnvironment ??
-    (await inquirer.prompt(COMMON_SELECT_ENVIRONMENT)).selectedEnvironment
+    (
+      await inquirer.prompt(
+        COMMON_SELECT_ENVIRONMENT_ONLY_ACCESSIBLE(TokenType.DELETE_BACKUP)
+      )
+    ).selectedEnvironment
 
   const { selectedKey } = await inquirer.prompt(
-    DELETE_DUMP_SELECT_BACKUP(await fetchBackups(sourceEnvironment))
+    DELETE_DUMP_SELECT_BACKUP(
+      await fetchBackups(sourceEnvironment, TokenType.DELETE_BACKUP)
+    )
   )
 
   if (selectedKey.toLowerCase().includes('finish deleting the dumps')) {
@@ -34,7 +41,13 @@ export const deleteDump = async (
     `${Environment.getBackupApiHost(sourceEnvironment)}/backup`,
     {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${Environment.getToken(
+          sourceEnvironment,
+          TokenType.DELETE_BACKUP
+        )}`,
+      },
       body: JSON.stringify({ key: selectedKey }),
     }
   )

@@ -1,10 +1,11 @@
 import * as ora from 'ora'
 import { constants as HTTP_CONSTANTS } from 'node:http2'
-import { Environment } from './env'
+import { Environment, TokenType } from './env'
 import { EnvironmentType } from 'src/types'
 
 export const fetchBackups = async (
-  environment: EnvironmentType
+  environment: EnvironmentType,
+  tokenType: TokenType
 ): Promise<string[]> => {
   const fetchSpinner = ora()
   fetchSpinner.start('Fetching backups list from the cloud...')
@@ -13,6 +14,9 @@ export const fetchBackups = async (
     `${Environment.getBackupApiHost(environment)}/backup`,
     {
       method: 'GET',
+      headers: {
+        Authorization: `Bearer ${Environment.getToken(environment, tokenType)}`,
+      },
     }
   )
 
