@@ -13,20 +13,19 @@ export enum TokenType {
   IMPORT_USERS = 'import-users',
 }
 
-interface EnvironmentTokens {
-  getHealth: string
-  createBackup: string
-  restoreBackup: string
-  deleteBackup: string
-  importUsers: string
-}
-
 @Injectable()
 export class AuthGuard implements CanActivate {
-  private readonly BACKUP_API_AUTHORIZATION_TOKENS: {
-    [environmentType in EnvironmentType]: EnvironmentTokens
-  } = JSON.parse(
-    this.configService.get<string>('BACKUP_API_AUTHORIZATION_TOKENS')
+  private readonly BACKUPS_GET_HEALTH_TOKEN: string = JSON.parse(
+    this.configService.get<string>('BACKUPS_GET_HEALTH_TOKEN')
+  )
+  private readonly BACKUPS_CREATE_BACKUP_TOKEN: string = JSON.parse(
+    this.configService.get<string>('BACKUPS_CREATE_BACKUP_TOKEN')
+  )
+  private readonly BACKUPS_RESTORE_BACKUP_TOKEN: string = JSON.parse(
+    this.configService.get<string>('BACKUPS_RESTORE_BACKUP_TOKEN')
+  )
+  private readonly BACKUPS_DELETE_BACKUP_TOKEN: string = JSON.parse(
+    this.configService.get<string>('BACKUPS_DELETE_BACKUP_TOKEN')
   )
 
   private readonly ENVIRONMENT_NAME: EnvironmentType =
@@ -52,41 +51,31 @@ export class AuthGuard implements CanActivate {
     const validAuthorizationHeaders: string[] = []
 
     for (const allowedTokenType of allowedTokenTypes) {
-      let allowedToken: string
-
       switch (allowedTokenType) {
         case TokenType.GET_HEALTH:
-          allowedToken =
-            this.BACKUP_API_AUTHORIZATION_TOKENS[this.ENVIRONMENT_NAME]
-              .getHealth
-          break
+          validAuthorizationHeaders.push(
+            ['Bearer', this.BACKUPS_GET_HEALTH_TOKEN].join(' ')
+          )
+          continue
 
         case TokenType.CREATE_BACKUP:
-          allowedToken =
-            this.BACKUP_API_AUTHORIZATION_TOKENS[this.ENVIRONMENT_NAME]
-              .createBackup
-          break
+          validAuthorizationHeaders.push(
+            ['Bearer', this.BACKUPS_CREATE_BACKUP_TOKEN].join(' ')
+          )
+          continue
 
         case TokenType.RESTORE_BACKUP:
-          allowedToken =
-            this.BACKUP_API_AUTHORIZATION_TOKENS[this.ENVIRONMENT_NAME]
-              .restoreBackup
-          break
+          validAuthorizationHeaders.push(
+            ['Bearer', this.BACKUPS_RESTORE_BACKUP_TOKEN].join(' ')
+          )
+          continue
 
         case TokenType.DELETE_BACKUP:
-          allowedToken =
-            this.BACKUP_API_AUTHORIZATION_TOKENS[this.ENVIRONMENT_NAME]
-              .deleteBackup
-          break
-
-        case TokenType.IMPORT_USERS:
-          allowedToken =
-            this.BACKUP_API_AUTHORIZATION_TOKENS[this.ENVIRONMENT_NAME]
-              .importUsers
-          break
+          validAuthorizationHeaders.push(
+            ['Bearer', this.BACKUPS_DELETE_BACKUP_TOKEN].join(' ')
+          )
+          continue
       }
-
-      validAuthorizationHeaders.push(['Bearer', allowedToken].join(' '))
     }
 
     return validAuthorizationHeaders.includes(
