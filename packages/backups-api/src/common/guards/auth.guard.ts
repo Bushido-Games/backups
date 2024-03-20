@@ -2,7 +2,6 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Reflector } from '@nestjs/core'
 import { Request } from 'express'
-import { EnvironmentType } from 'src/backup/backup.types'
 import { ALLOWED_TOKEN_TYPES_KEY } from '../decorators/allowed-tokens.decorator'
 
 export enum TokenType {
@@ -15,21 +14,14 @@ export enum TokenType {
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  private readonly BACKUPS_GET_HEALTH_TOKEN: string = JSON.parse(
+  private readonly BACKUPS_GET_HEALTH_TOKEN: string =
     this.configService.get<string>('BACKUPS_GET_HEALTH_TOKEN')
-  )
-  private readonly BACKUPS_CREATE_BACKUP_TOKEN: string = JSON.parse(
+  private readonly BACKUPS_CREATE_BACKUP_TOKEN: string =
     this.configService.get<string>('BACKUPS_CREATE_BACKUP_TOKEN')
-  )
-  private readonly BACKUPS_RESTORE_BACKUP_TOKEN: string = JSON.parse(
+  private readonly BACKUPS_RESTORE_BACKUP_TOKEN: string =
     this.configService.get<string>('BACKUPS_RESTORE_BACKUP_TOKEN')
-  )
-  private readonly BACKUPS_DELETE_BACKUP_TOKEN: string = JSON.parse(
+  private readonly BACKUPS_DELETE_BACKUP_TOKEN: string =
     this.configService.get<string>('BACKUPS_DELETE_BACKUP_TOKEN')
-  )
-
-  private readonly ENVIRONMENT_NAME: EnvironmentType =
-    this.configService.get<EnvironmentType>('ENVIRONMENT_NAME')
 
   public constructor(
     private readonly reflector: Reflector,
