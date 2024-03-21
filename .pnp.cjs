@@ -2221,7 +2221,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["rimraf", "npm:3.0.2"],\
             ["rxjs", "npm:7.5.6"],\
             ["sequelize", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:6.23.2"],\
-            ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.3"],\
+            ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.6"],\
             ["source-map-support", "npm:0.5.21"],\
             ["src", "link:./src::locator=%40bushidogames%2Fbackups-api%40workspace%3Apackages%2Fbackups-api"],\
             ["supertest", "npm:6.2.4"],\
@@ -2929,7 +2929,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["reflect-metadata", "npm:0.1.13"],\
             ["rxjs", "npm:7.5.6"],\
             ["sequelize", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:6.23.2"],\
-            ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.3"],\
+            ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.6"],\
             ["uuid", "npm:8.3.2"]\
           ],\
           "packagePeers": [\
@@ -9253,17 +9253,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["sequelize-typescript", [\
-        ["npm:2.1.3", {\
-          "packageLocation": "./.yarn/cache/sequelize-typescript-npm-2.1.3-512be8fd59-e6e2757600.zip/node_modules/sequelize-typescript/",\
+        ["npm:2.1.6", {\
+          "packageLocation": "./.yarn/cache/sequelize-typescript-npm-2.1.6-6cf9e2c703-af01407d3c.zip/node_modules/sequelize-typescript/",\
           "packageDependencies": [\
-            ["sequelize-typescript", "npm:2.1.3"]\
+            ["sequelize-typescript", "npm:2.1.6"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.3", {\
-          "packageLocation": "./.yarn/__virtual__/sequelize-typescript-virtual-5b90fbd97a/0/cache/sequelize-typescript-npm-2.1.3-512be8fd59-e6e2757600.zip/node_modules/sequelize-typescript/",\
+        ["virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.6", {\
+          "packageLocation": "./.yarn/__virtual__/sequelize-typescript-virtual-8eb06f1f06/0/cache/sequelize-typescript-npm-2.1.6-6cf9e2c703-af01407d3c.zip/node_modules/sequelize-typescript/",\
           "packageDependencies": [\
-            ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.3"],\
+            ["sequelize-typescript", "virtual:694db78d8cc5c7b569e2edebde91dd688f7495111b48f1c0b69ac76410c43ce9804f4a93b7b8529b4849b444dae3cac01fcaffef04ae2d6941104e63762916bd#npm:2.1.6"],\
             ["@types/node", "npm:20.4.1"],\
             ["@types/reflect-metadata", null],\
             ["@types/sequelize", "npm:4.28.14"],\
