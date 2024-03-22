@@ -108,14 +108,17 @@ export class Environment {
       .filter((line: string): boolean => line.trim().startsWith(fullName))
 
     if (matchingVariables.length < 1) {
-      throw new Error(
-        `Got access to variables, but unable to find one named ${fullName}!`
+      spinner.fail(
+        `Unable to obtain key ${variableName} for ${displayName} from Vault!`
       )
+      return null
     }
 
     const result = matchingVariables[0].replace(`${fullName}=`, '').trim()
 
-    spinner.succeed(`Successfully obtained keys for ${displayName} from Vault!`)
+    spinner.succeed(
+      `Successfully obtained key ${variableName} for ${displayName} from Vault!`
+    )
 
     return result
   }
