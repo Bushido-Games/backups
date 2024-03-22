@@ -30,65 +30,80 @@ export class Environment {
     `${homedir()}/.backups-cli-expert-mode`
   )
 
-  private static tokens: {
-    [environment in EnvironmentType]:
-      | {
-          [environment in EnvironmentType]: EnvironmentTokens
-        }
-      | null
-  }
+  private static readonly vaultCache: { [cacheKey: string]: string | null } = {}
 
-  private static apiHosts: { [environment in EnvironmentType]: string } = {
+  private static readonly tokens: {
+    [environment in EnvironmentType]?: EnvironmentTokens | null
+  } = {}
+
+  private static readonly apiHosts: {
+    [environment in EnvironmentType]: string
+  } = {
     [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3000`,
     [EnvironmentType.STAGING]: process.env.STAGING_API_HOST,
     [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_API_HOST,
   }
 
-  private static backupApiHosts: { [environment in EnvironmentType]: string } =
-    {
-      [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
-      [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
-      [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
-    }
+  private static readonly backupApiHosts: {
+    [environment in EnvironmentType]: string
+  } = {
+    [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
+    [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
+    [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
+  }
 
-  private static async loadFromVault(
+  private static readonly projectNames: string[] =
+    process.env.PROJECT_NAMES.split(',').map((projectName: string): string =>
+      projectName.trim()
+    )
+
+  private static async loadFromSingleVault(
     environment: EnvironmentType,
-    name: string
+    projectName: string,
+    variableName: string
   ): Promise<string | null> {
     const spinner = ora()
 
-    spinner.start(`Please wait, obtaining key for ${environment} from Vault...`)
+    const displayName = [environment, projectName].join('-')
+
+    spinner.start(
+      `Please wait, obtaining keys for ${displayName} from Vault...`
+    )
 
     const fullName = [
       process.env.CLI_PREFIX,
       environment,
-      process.env.PROJECT_NAME,
-      name,
+      projectName,
+      variableName,
     ]
       .join('_')
       .replaceAll('-', '_')
       .toUpperCase()
 
-    let output: string
+    if (!Object.hasOwn(this.vaultCache, displayName)) {
+      try {
+        const { stdout } = await promisify(execFile)('envvault', [
+          '-p',
+          projectName,
+          '-e',
+          environment,
+          'env',
+        ])
 
-    try {
-      const { stdout } = await promisify(execFile)('envvault', [
-        '-p',
-        process.env.PROJECT_NAME,
-        '-e',
-        environment,
-        'env',
-      ])
+        this.vaultCache[displayName] = stdout
+      } catch {
+        this.vaultCache[displayName] = null
+      }
+    }
 
-      output = stdout
-    } catch {
+    if (this.vaultCache[displayName] === null) {
       spinner.fail(
-        `Unable to obtain key for ${environment} from Vault! You may not have the required permissions.`
+        `Unable to obtain keys for ${displayName} from Vault! You may not have the required permissions.`
       )
       return null
     }
 
-    const matchingVariables = output
+    const matchingVariables = this.vaultCache[displayName]
       .split('\n')
       .filter((line: string): boolean => line.trim().startsWith(fullName))
 
@@ -100,31 +115,59 @@ export class Environment {
 
     const result = matchingVariables[0].replace(`${fullName}=`, '').trim()
 
-    spinner.succeed(`Successfully obtained key for ${environment} from Vault!`)
+    spinner.succeed(`Successfully obtained keys for ${displayName} from Vault!`)
 
     return result
   }
 
-  public static async loadAllFromVault() {
-    this.tokens = {
-      [EnvironmentType.LOCAL]: JSON.parse(
-        await this.loadFromVault(
-          EnvironmentType.LOCAL,
-          process.env.ENV_VAR_NAME
-        )
-      ),
-      [EnvironmentType.STAGING]: JSON.parse(
-        await this.loadFromVault(
-          EnvironmentType.STAGING,
-          process.env.ENV_VAR_NAME
-        )
-      ),
-      [EnvironmentType.PRODUCTION]: JSON.parse(
-        await this.loadFromVault(
-          EnvironmentType.PRODUCTION,
-          process.env.ENV_VAR_NAME
-        )
-      ),
+  private static async loadFromAllVaults(
+    environment: EnvironmentType,
+    variableName: string
+  ): Promise<string | null> {
+    for (const projectName of this.projectNames) {
+      const result = await this.loadFromSingleVault(
+        environment,
+        projectName,
+        variableName
+      )
+
+      if (result !== null) {
+        return result
+      }
+    }
+
+    return null
+  }
+
+  public static async loadTokens() {
+    for (const environment of Object.values(EnvironmentType)) {
+      Object.assign(this.tokens, {
+        [environment]: {
+          getHealth: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_GET_HEALTH_TOKEN'
+          ),
+          createBackup: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_CREATE_BACKUP_TOKEN'
+          ),
+          restoreBackup: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_RESTORE_BACKUP_TOKEN'
+          ),
+          deleteBackup: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_DELETE_BACKUP_TOKEN'
+          ),
+          importUsers:
+            process.env.HAS_FA_IMPORT === 'true'
+              ? await this.loadFromAllVaults(
+                  environment,
+                  'BACKUPS_IMPORT_USERS_TOKEN'
+                )
+              : null,
+        },
+      })
     }
   }
 
@@ -134,45 +177,19 @@ export class Environment {
   ): string | null {
     switch (tokenType) {
       case TokenType.GET_HEALTH:
-        return (
-          this.tokens[EnvironmentType.LOCAL]?.[environment].getHealth ??
-          this.tokens[EnvironmentType.STAGING]?.[environment].getHealth ??
-          this.tokens[EnvironmentType.PRODUCTION]?.[environment].getHealth ??
-          null
-        )
+        return this.tokens[environment].getHealth
 
       case TokenType.CREATE_BACKUP:
-        return (
-          this.tokens[EnvironmentType.LOCAL]?.[environment].createBackup ??
-          this.tokens[EnvironmentType.STAGING]?.[environment].createBackup ??
-          this.tokens[EnvironmentType.PRODUCTION]?.[environment].createBackup ??
-          null
-        )
+        return this.tokens[environment].createBackup
 
       case TokenType.RESTORE_BACKUP:
-        return (
-          this.tokens[EnvironmentType.LOCAL]?.[environment].restoreBackup ??
-          this.tokens[EnvironmentType.STAGING]?.[environment].restoreBackup ??
-          this.tokens[EnvironmentType.PRODUCTION]?.[environment]
-            .restoreBackup ??
-          null
-        )
+        return this.tokens[environment].restoreBackup
 
       case TokenType.DELETE_BACKUP:
-        return (
-          this.tokens[EnvironmentType.LOCAL]?.[environment].deleteBackup ??
-          this.tokens[EnvironmentType.STAGING]?.[environment].deleteBackup ??
-          this.tokens[EnvironmentType.PRODUCTION]?.[environment].deleteBackup ??
-          null
-        )
+        return this.tokens[environment].deleteBackup
 
       case TokenType.IMPORT_USERS:
-        return (
-          this.tokens[EnvironmentType.LOCAL]?.[environment].importUsers ??
-          this.tokens[EnvironmentType.STAGING]?.[environment].importUsers ??
-          this.tokens[EnvironmentType.PRODUCTION]?.[environment].importUsers ??
-          null
-        )
+        return this.tokens[environment].importUsers
 
       default:
         return null
