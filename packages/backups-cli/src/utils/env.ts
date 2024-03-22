@@ -158,10 +158,13 @@ export class Environment {
           environment,
           'BACKUPS_DELETE_BACKUP_TOKEN'
         ),
-        importUsers: await this.loadFromAllVaults(
-          environment,
-          'BACKUPS_IMPORT_USERS_TOKEN'
-        ),
+        importUsers:
+          process.env.HAS_FA_IMPORT === 'true'
+            ? await this.loadFromAllVaults(
+                environment,
+                'BACKUPS_IMPORT_USERS_TOKEN'
+              )
+            : null,
       }
     }
   }
