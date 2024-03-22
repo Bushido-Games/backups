@@ -141,31 +141,33 @@ export class Environment {
 
   public static async loadTokens() {
     for (const environment of Object.values(EnvironmentType)) {
-      this.tokens[environment] = {
-        getHealth: await this.loadFromAllVaults(
-          environment,
-          'BACKUPS_GET_HEALTH_TOKEN'
-        ),
-        createBackup: await this.loadFromAllVaults(
-          environment,
-          'BACKUPS_CREATE_BACKUP_TOKEN'
-        ),
-        restoreBackup: await this.loadFromAllVaults(
-          environment,
-          'BACKUPS_RESTORE_BACKUP_TOKEN'
-        ),
-        deleteBackup: await this.loadFromAllVaults(
-          environment,
-          'BACKUPS_DELETE_BACKUP_TOKEN'
-        ),
-        importUsers:
-          process.env.HAS_FA_IMPORT === 'true'
-            ? await this.loadFromAllVaults(
-                environment,
-                'BACKUPS_IMPORT_USERS_TOKEN'
-              )
-            : null,
-      }
+      Object.assign(this.tokens, {
+        [environment]: {
+          getHealth: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_GET_HEALTH_TOKEN'
+          ),
+          createBackup: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_CREATE_BACKUP_TOKEN'
+          ),
+          restoreBackup: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_RESTORE_BACKUP_TOKEN'
+          ),
+          deleteBackup: await this.loadFromAllVaults(
+            environment,
+            'BACKUPS_DELETE_BACKUP_TOKEN'
+          ),
+          importUsers:
+            process.env.HAS_FA_IMPORT === 'true'
+              ? await this.loadFromAllVaults(
+                  environment,
+                  'BACKUPS_IMPORT_USERS_TOKEN'
+                )
+              : null,
+        },
+      })
     }
   }
 
