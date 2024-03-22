@@ -33,8 +33,8 @@ export class Environment {
   private static readonly vaultCache: { [cacheKey: string]: string | null } = {}
 
   private static readonly tokens: {
-    [environment in EnvironmentType]: EnvironmentTokens | null
-  }
+    [environment in EnvironmentType]?: EnvironmentTokens | null
+  } = {}
 
   private static readonly apiHosts: {
     [environment in EnvironmentType]: string
