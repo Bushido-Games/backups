@@ -8,7 +8,7 @@ async function bootstrap() {
 
   inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt)
 
-  await Environment.loadAllFromVault()
+  await Environment.loadTokens()
   await selectTask()
 }
 

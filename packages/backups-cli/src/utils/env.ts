@@ -30,48 +30,57 @@ export class Environment {
     `${homedir()}/.backups-cli-expert-mode`
   )
 
-  private static readonly vaultCache: { [cacheKey: string]: string } = {}
+  private static readonly vaultCache: { [cacheKey: string]: string | null } = {}
 
-  private static tokens: {
+  private static readonly tokens: {
     [environment in EnvironmentType]: EnvironmentTokens | null
   }
 
-  private static apiHosts: { [environment in EnvironmentType]: string } = {
+  private static readonly apiHosts: {
+    [environment in EnvironmentType]: string
+  } = {
     [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3000`,
     [EnvironmentType.STAGING]: process.env.STAGING_API_HOST,
     [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_API_HOST,
   }
 
-  private static backupApiHosts: { [environment in EnvironmentType]: string } =
-    {
-      [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
-      [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
-      [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
-    }
+  private static readonly backupApiHosts: {
+    [environment in EnvironmentType]: string
+  } = {
+    [EnvironmentType.LOCAL]: `http://${this.LOCAL_API_ADDRESS}:3010`,
+    [EnvironmentType.STAGING]: process.env.STAGING_BACKUP_API_HOST,
+    [EnvironmentType.PRODUCTION]: process.env.PRODUCTION_BACKUP_API_HOST,
+  }
 
-  private static async loadFromVault(
+  private static readonly projectNames: string[] =
+    process.env.PROJECT_NAMES.split(',').map((projectName: string): string =>
+      projectName.trim()
+    )
+
+  private static async loadFromSingleVault(
     environment: EnvironmentType,
-    name: string,
-    separateVault: boolean
+    projectName: string,
+    variableName: string
   ): Promise<string | null> {
     const spinner = ora()
 
-    const projectName = `${process.env.PROJECT_NAME}${
-      separateVault ? '-backups' : ''
-    }`
-
-    const displayName = `${environment}-${projectName}`
+    const displayName = [environment, projectName].join('-')
 
     spinner.start(
       `Please wait, obtaining keys for ${displayName} from Vault...`
     )
 
-    const fullName = [process.env.CLI_PREFIX, environment, projectName, name]
+    const fullName = [
+      process.env.CLI_PREFIX,
+      environment,
+      projectName,
+      variableName,
+    ]
       .join('_')
       .replaceAll('-', '_')
       .toUpperCase()
 
-    if (!this.vaultCache[displayName]) {
+    if (!Object.hasOwn(this.vaultCache, displayName)) {
       try {
         const { stdout } = await promisify(execFile)('envvault', [
           '-p',
@@ -83,11 +92,15 @@ export class Environment {
 
         this.vaultCache[displayName] = stdout
       } catch {
-        spinner.fail(
-          `Unable to obtain keys for ${displayName} from Vault! You may not have the required permissions.`
-        )
-        return null
+        this.vaultCache[displayName] = null
       }
+    }
+
+    if (this.vaultCache[displayName] === null) {
+      spinner.fail(
+        `Unable to obtain keys for ${displayName} from Vault! You may not have the required permissions.`
+      )
+      return null
     }
 
     const matchingVariables = this.vaultCache[displayName]
@@ -107,179 +120,49 @@ export class Environment {
     return result
   }
 
-  public static async loadAllFromVault() {
-    this.tokens = {
-      [EnvironmentType.LOCAL]: {
-        getHealth:
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_GET_HEALTH_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_GET_HEALTH_TOKEN',
-            true
-          )),
-        createBackup:
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_CREATE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_CREATE_BACKUP_TOKEN',
-            true
-          )),
-        restoreBackup:
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_RESTORE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_RESTORE_BACKUP_TOKEN',
-            true
-          )),
-        deleteBackup:
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_DELETE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_DELETE_BACKUP_TOKEN',
-            true
-          )),
-        importUsers:
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_IMPORT_USERS_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.LOCAL,
-            'BACKUPS_IMPORT_USERS_TOKEN',
-            true
-          )),
-      },
-      [EnvironmentType.STAGING]: {
-        getHealth:
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_GET_HEALTH_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_GET_HEALTH_TOKEN',
-            true
-          )),
-        createBackup:
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_CREATE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_CREATE_BACKUP_TOKEN',
-            true
-          )),
-        restoreBackup:
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_RESTORE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_RESTORE_BACKUP_TOKEN',
-            true
-          )),
-        deleteBackup:
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_DELETE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_DELETE_BACKUP_TOKEN',
-            true
-          )),
-        importUsers:
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_IMPORT_USERS_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.STAGING,
-            'BACKUPS_IMPORT_USERS_TOKEN',
-            true
-          )),
-      },
-      [EnvironmentType.PRODUCTION]: {
-        getHealth:
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_GET_HEALTH_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_GET_HEALTH_TOKEN',
-            true
-          )),
-        createBackup:
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_CREATE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_CREATE_BACKUP_TOKEN',
-            true
-          )),
-        restoreBackup:
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_RESTORE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_RESTORE_BACKUP_TOKEN',
-            true
-          )),
-        deleteBackup:
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_DELETE_BACKUP_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_DELETE_BACKUP_TOKEN',
-            true
-          )),
-        importUsers:
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_IMPORT_USERS_TOKEN',
-            false
-          )) ??
-          (await this.loadFromVault(
-            EnvironmentType.PRODUCTION,
-            'BACKUPS_IMPORT_USERS_TOKEN',
-            true
-          )),
-      },
+  private static async loadFromAllVaults(
+    environment: EnvironmentType,
+    variableName: string
+  ): Promise<string | null> {
+    for (const projectName of this.projectNames) {
+      const result = await this.loadFromSingleVault(
+        environment,
+        projectName,
+        variableName
+      )
+
+      if (result !== null) {
+        return result
+      }
+    }
+
+    return null
+  }
+
+  public static async loadTokens() {
+    for (const environment of Object.values(EnvironmentType)) {
+      this.tokens[environment] = {
+        getHealth: await this.loadFromAllVaults(
+          environment,
+          'BACKUPS_GET_HEALTH_TOKEN'
+        ),
+        createBackup: await this.loadFromAllVaults(
+          environment,
+          'BACKUPS_CREATE_BACKUP_TOKEN'
+        ),
+        restoreBackup: await this.loadFromAllVaults(
+          environment,
+          'BACKUPS_RESTORE_BACKUP_TOKEN'
+        ),
+        deleteBackup: await this.loadFromAllVaults(
+          environment,
+          'BACKUPS_DELETE_BACKUP_TOKEN'
+        ),
+        importUsers: await this.loadFromAllVaults(
+          environment,
+          'BACKUPS_IMPORT_USERS_TOKEN'
+        ),
+      }
     }
   }
 
