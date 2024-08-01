@@ -1,4 +1,4 @@
-FROM node:18-bookworm
+FROM node:22-bookworm
 
 ENV TZ Europe/Warsaw
 ENV PACKAGE_NAME backups-api
