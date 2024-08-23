@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   NotFoundException,
   Param,
   Post,
@@ -21,7 +22,9 @@ import { nanoid } from 'nanoid'
 import { RestoreBackupDto, DeleteBackupDto, CreateBackupDto } from './dtos'
 import {
   BackupType,
+  CreateProgress,
   CreateResponse,
+  RestoreProgress,
   RestoreResponse,
   TrackerResponse,
 } from './backup.types'
@@ -57,7 +60,15 @@ export class BackupController {
 
     this.backupService.prepareTracker(trackerId)
 
-    this.backupService.createDump(connectionString, key, trackerId)
+    this.backupService
+      .createDump(connectionString, key, trackerId)
+      .catch((err: any) => {
+        this.backupService.trackers[trackerId].progress.push(
+          CreateProgress.FAILED
+        )
+
+        Logger.error(err)
+      })
 
     return { trackerId }
   }
@@ -79,7 +90,15 @@ export class BackupController {
 
     this.backupService.prepareTracker(trackerId)
 
-    this.backupService.restoreDump(key, trackerId, dropCurrent)
+    this.backupService
+      .restoreDump(key, trackerId, dropCurrent)
+      .catch((err: any) => {
+        this.backupService.trackers[trackerId].progress.push(
+          RestoreProgress.FAILED
+        )
+
+        Logger.error(err)
+      })
 
     return { trackerId }
   }

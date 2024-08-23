@@ -128,6 +128,13 @@ export const createDump = async (
         )} collections and ${chalk.greenBright(documents)} documents)`
       )
     }
+
+    if (progress.includes(CreateProgress.FAILED)) {
+      isFinished = true
+      uploadSpinner.fail(
+        'Database dump creation has failed! See backups-api logs for more information.'
+      )
+    }
   }
 
   return { key, sourceEnvironment }

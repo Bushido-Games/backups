@@ -165,6 +165,14 @@ export const restoreDump = async (
         )} collections and ${chalk.greenBright(documents)} documents)`
       )
     }
+
+    if (progress.includes(RestoreProgress.FAILED)) {
+      isFinished = true
+      isRestoring = false
+      restoreSpinner.fail(
+        'Database dump restoration has failed! See backups-api logs for more information.'
+      )
+    }
   }
 
   if (process.env.HAS_FA_IMPORT === 'true' && importUsers) {

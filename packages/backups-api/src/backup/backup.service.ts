@@ -103,7 +103,9 @@ export class BackupService {
 
     if (
       tracker.progress.includes(CreateProgress.UPLOAD_FINISHED) ||
-      tracker.progress.includes(RestoreProgress.RESTORE_FINISHED)
+      tracker.progress.includes(RestoreProgress.RESTORE_FINISHED) ||
+      tracker.progress.includes(CreateProgress.FAILED) ||
+      tracker.progress.includes(RestoreProgress.FAILED)
     ) {
       delete this.trackers[trackerId]
     } else {
