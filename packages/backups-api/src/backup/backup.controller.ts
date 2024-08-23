@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   NotFoundException,
   Param,
   Post,
@@ -66,7 +67,7 @@ export class BackupController {
           CreateProgress.FAILED
         )
 
-        console.log(err)
+        Logger.error(err)
       })
 
     return { trackerId }
@@ -96,7 +97,7 @@ export class BackupController {
           RestoreProgress.FAILED
         )
 
-        console.log(err)
+        Logger.error(err)
       })
 
     return { trackerId }
