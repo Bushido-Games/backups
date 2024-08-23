@@ -17,6 +17,7 @@ export enum CreateProgress {
   DUMP_FINISHED = 'dump-finished',
   UPLOAD_STARTED = 'upload-started',
   UPLOAD_FINISHED = 'upload-finished',
+  FAILED = 'failed',
 }
 
 export enum RestoreProgress {
@@ -24,6 +25,7 @@ export enum RestoreProgress {
   DOWNLOAD_FINISHED = 'download-finished',
   RESTORE_STARTED = 'restore-started',
   RESTORE_FINISHED = 'restore-finished',
+  FAILED = 'failed',
 }
 
 export enum EnvironmentType {
