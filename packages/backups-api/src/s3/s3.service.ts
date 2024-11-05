@@ -79,11 +79,12 @@ export class S3Service {
     )
 
     const contents: B2Object[] = JSON.parse(
+      // More about b2-cli ls https://b2-command-line-tool.readthedocs.io/_/downloads/en/master/pdf/
       await this.cliService.execute(
         'ls',
-        this.BACKUP_BUCKET_NAME,
         '--json',
-        '--versions'
+        '--versions',
+        `b2://${this.BACKUP_BUCKET_NAME}`
       )
     )
 
@@ -95,12 +96,11 @@ export class S3Service {
     // Delete files in batches of 32 at a time
     while (toDelete.length) {
       await Promise.allSettled(
-        toDelete
-          .splice(0, 32)
-          .map(
-            ({ fileId }: B2Object): Promise<string> =>
-              this.cliService.execute('delete-file-version', fileId)
-          )
+        toDelete.splice(0, 32).map(
+          ({ fileId }: B2Object): Promise<string> =>
+            // More about b2-cli rm https://b2-command-line-tool.readthedocs.io/_/downloads/en/master/pdf/
+            this.cliService.execute('rm', `b2id://${fileId}`)
+        )
       )
     }
   }

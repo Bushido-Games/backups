@@ -1715,6 +1715,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/backups-cli/",\
           "packageDependencies": [\
             ["@bushidogames/backups-cli", "workspace:packages/backups-cli"],\
+            ["@bushidogames/vault", "npm:1.0.24"],\
             ["@types/inquirer", "npm:8.2.6"],\
             ["@types/inquirer-autocomplete-prompt", "npm:2.0.0"],\
             ["@types/node", "npm:18.14.6"],\
@@ -1727,6 +1728,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["typescript", "patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=289587"]\
           ],\
           "linkType": "SOFT"\
+        }]\
+      ]],\
+      ["@bushidogames/vault", [\
+        ["npm:1.0.24", {\
+          "packageLocation": "./.yarn/cache/@bushidogames-vault-npm-1.0.24-94004e8810-d53e63226a.zip/node_modules/@bushidogames/vault/",\
+          "packageDependencies": [\
+            ["@bushidogames/vault", "npm:1.0.24"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@colors/colors", [\
