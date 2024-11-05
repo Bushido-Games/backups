@@ -1163,6 +1163,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@bushidogames/backups-cli@workspace:packages/backups-cli"
   dependencies:
+    "@bushidogames/vault": ^1.0.24
     "@types/inquirer": ^8.2.6
     "@types/inquirer-autocomplete-prompt": ^2.0.0
     "@types/node": ^18.14.6
@@ -1188,6 +1189,13 @@ __metadata:
     typescript: ^4.7.4
   languageName: unknown
   linkType: soft
+
+"@bushidogames/vault@npm:^1.0.24":
+  version: 1.0.24
+  resolution: "@bushidogames/vault@npm:1.0.24"
+  checksum: d53e63226a0e94a547cc281aa794e89974fd64cd2ee0fa420c48919445a59c0ace40262d0d0b146b2460709379b6bd7867d62c9801d23e5a3860feccf65a959c
+  languageName: node
+  linkType: hard
 
 "@colors/colors@npm:1.5.0":
   version: 1.5.0

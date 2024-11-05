@@ -6,8 +6,7 @@ jobs:
     steps:
       - name: Checkout Git Repository
         uses: actions/checkout@v4
-        with:
-          submodules: true
+
       - name: Cache dependencies
         uses: actions/setup-node@v3
         with:
